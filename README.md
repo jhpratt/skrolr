@@ -1,12 +1,13 @@
 <sub><super>NB: *skrolr* relies on CSS transitions, and has no JavaScript backup. All modern browsers support this, but IE9- does not.</super></sub>
 
-# skrolr library
+skrolr library
+===
 
 ### &#x2713; No dependencies.
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? 2.5 kB minified. Just the basics? 670 bytes.
+*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? 2.340 kB minified. Just the basics? 443 bytes.
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
@@ -39,7 +40,7 @@ document.getElementById("skrolr").skrolr({
 
 ### Stopping
 
-What if we want to stop a *skrolr*?
+What if you want to stop a *skrolr*?
 
 ```
 document.getElementById("skrolr").skrolr({
@@ -116,7 +117,3 @@ document.getElementById("skrolr").skrolr({
 ```
 
 NB: `declare` will override initialization if called together
-
-#### Questions?
-
-Contact me! jhpratt@users.noreply.github.com. I'll typically respond within 24 hours. If I don't respond within two days, feel free to sent another email!
