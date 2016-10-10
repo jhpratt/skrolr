@@ -117,6 +117,8 @@ document.getElementById("skrolr").skrolr({
 });
 ```
 
+NB: `declare` will override initialization if called together
+
 ### Arrows
 
 If you want to add forward/back arrows to *skrolr*, just tell *skrolr* to show the arrows and don't worry about anything else.
@@ -126,5 +128,3 @@ document.getElementById("skrolr").skrolr({
 	arrows: true
 });
 ```
-
-NB: `declare` will override initialization if called together
