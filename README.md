@@ -11,7 +11,7 @@ skrolr library
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
-```
+```html
 <script src="skrolr.js"></script>
 <link rel="stylesheet" href="skrolr.css">
 <div>
@@ -31,7 +31,7 @@ document.getElementById("skrolr").skrolr();
 
 Let's set some timing when we initialize a *skrolr*.
 
-```
+```javascript
 document.getElementById("skrolr").skrolr({
 	scrollTime: 1000,
 	transitionTime: 350
@@ -42,7 +42,7 @@ document.getElementById("skrolr").skrolr({
 
 What if you want to stop a *skrolr*?
 
-```
+```javascript
 document.getElementById("skrolr").skrolr({
 	stop: true
 });
@@ -54,7 +54,7 @@ NB: `stop` will override initialization if called together
 
 Lots of scrollers have controls to go forwards and backwards. *skrolr* can do that too. The best part? There's tons of ways to call it, so it's easy to remember.
 
-```
+```javascript
 // forward (5 ways)
 document.getElementById("skrolr").skrolr({
 	forward: 500
@@ -64,7 +64,7 @@ document.getElementById("skrolr").skrolr({
 	// rt: 500
 });
 ```
-```
+```javascript
 // backward (5 ways)
 document.getElementById("skrolr").skrolr({
 	backward: 500
@@ -83,7 +83,7 @@ NB: `forward` overrides `backward`
 
 Having the ability to only show a certain number of objects at a time can be immensely useful. *skrolr* allows you to do this by default, and it's as easy as you'd hope.
 
-```
+```javascript
 document.getElementById("skrolr").skrolr({
 	// [minSize, maxSize, numberShown]
 	[0, 500, 1], // if width of parent is 0-499px, show 1 <li> element
@@ -100,7 +100,7 @@ document.getElementById("skrolr").skrolr({
 ### Transition timing
 
 By default, *skrolr* uses `ease-in-out` for the transition-timing property in CSS. If you want to use another timing function, here's how you can set it:
-
+javascript
 ```
 document.getElementById("skrolr").skrolr({
 	transitionTiming: 'linear'
@@ -111,9 +111,19 @@ document.getElementById("skrolr").skrolr({
 
 Sometime you might want to initialize a *skrolr* without it running. Not an issue; just declare it as a *skrolr*.
 
-```
+```javascript
 document.getElementById("skrolr").skrolr({
 	declare: true
+});
+```
+
+### Arrows
+
+If you want to add forward/back arrows to *skrolr*, just tell *skrolr* to show the arrows and don't worry about anything else.
+
+```javascript
+document.getElementById("skrolr").skrolr({
+	arrows: true
 });
 ```
 
