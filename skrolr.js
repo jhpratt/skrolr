@@ -100,12 +100,13 @@ Object.prototype.skrolr = function(params, notFirst) {
 		obj.setAttribute("data-skrolr-running","false");
 		var transitionTime = params.forward || params.fwd || params.fd || params.right || params.rt || 500;
 	}
-	if(params.back // back
+	if(params.backward // back
+		|| params.back
 		|| params.bk
 		|| params.left
 		|| params.lt) {
 		obj.setAttribute("data-skrolr-running","false");
-		var transitionTime = params.back || params.bk || params.left || params.lt || 500;
+		var transitionTime = params.backward || params.back || params.bk || params.left || params.lt || 500;
 
 		// get last object and move to front
 		var lastChild = obj.lastElementChild;
@@ -142,6 +143,7 @@ Object.prototype.skrolr = function(params, notFirst) {
 		|| params.fd
 		|| params.right
 		|| params.rt
+		|| params.backward
 		|| params.back
 		|| params.bk
 		|| params.left
