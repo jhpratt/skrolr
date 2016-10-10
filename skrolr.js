@@ -1,3 +1,12 @@
+function skrolr_showArrows(obj) {
+	obj.children[1].className = "skrolr-arrow skrolr-left";
+	obj.children[2].className = "skrolr-arrow skrolr-right";
+}
+function skrolr_removeArrows(obj) {
+	obj.children[1].className = "skrolr-arrow skrolr-left skrolr-hidden";
+	obj.children[2].className = "skrolr-arrow skrolr-right skrolr-hidden";
+}
+
 Object.prototype.setWidth = function(sizes) {
 	"use strict";
 	var width = this.offsetWidth;
@@ -40,21 +49,48 @@ Object.prototype.childrenWidth = function() {
 }
 
 // main scroller function
-Object.prototype.skrolr = function(params, notFirst) {
+Object.prototype.skrolr = function(params) {
 	"use strict";
 	var obj = this;
+
+	var scrollTime = (typeof params.scrollTime==="undefined") ? 3000 : params.scrollTime;
+	var transitionTime = (typeof params.transitionTime==="undefined") ? 500 : params.transitionTime;
+	var transitionTiming = (typeof params.transitionTiming==="undefined") ? "ease-in-out" : params.transitionTiming;
 
 	// in case all you want is defaults
 	if(!params) { params = {}; }
 
-	// get rid of default margin and padding on <ul> (without transition)
-	if(!notFirst) {
+	if(obj.getAttribute("data-skrolr-running")===null) {
+		// get rid of default margin and padding on <ul> (without transition)
 		obj.style.transition = "0";
 		obj.style.margin = "0";
 		obj.style.padding = "0";
-	}
 
-	if(!notFirst && typeof params.numWide !== "undefined") { // if initialization AND numWide is defined, set width of each child element
+		// create parent element
+		var parent = document.createElement("div");
+		parent.style.position = "relative";
+		parent.style.overflow = "hidden";
+		obj.parentElement.insertBefore(parent, obj);
+		parent.appendChild(obj);
+
+		if(typeof params.arrows !== "undefined") {
+			parent.onmouseenter = function() { skrolr_showArrows(obj.parentElement); };
+			parent.onmouseleave = function() { skrolr_removeArrows(obj.parentElement); };
+
+			// create left arrow
+			var leftArrow = document.createElement("div");
+			leftArrow.className = "skrolr-arrow skrolr-left skrolr-hidden";
+			leftArrow.onclick = function() { obj.skrolr({ lt:transitionTime }) };
+			parent.appendChild(leftArrow);
+	
+			// create right arrow
+			var rightArrow = document.createElement("div");
+			rightArrow.className = "skrolr-arrow skrolr-right skrolr-hidden";
+			rightArrow.onclick = function() { obj.skrolr({ rt:transitionTime }) };
+			parent.appendChild(rightArrow);
+		}
+	}
+	if(obj.getAttribute("data-skrolr-running")===null && typeof params.numWide !== "undefined") { // if initialization AND numWide is defined, set width of each child element
 		obj.setWidth(params.numWide);
 	}
 
@@ -70,25 +106,32 @@ Object.prototype.skrolr = function(params, notFirst) {
 
 	// declare a scroller and don't start it
 	if(params.declare == true && obj.getAttribute("data-skrolr-running") === null) {
-		obj.parentElement.style.overflow = "hidden"; // this is why the parent element of the scroller is required
 		obj.setAttribute("data-skrolr-running","false");
 		return;
 	}
 
-	var scrollTime = (typeof params.scrollTime==="undefined") ? 3000 : params.scrollTime;
-	var transitionTime = (typeof params.transitionTime==="undefined") ? 500 : params.transitionTime;
-	var transitionTiming = (typeof params.transitionTiming==="undefined") ? "ease-in-out" : params.transitionTiming;
-
 	// changes in running state
-	if(!notFirst) {
+	if(obj.getAttribute("data-skrolr-running")===null) {
 		obj.setAttribute("data-skrolr-running","true");
-		obj.parentElement.style.overflow = "hidden"; // this is why the parent element of the scroller is required
 	}
-	if(obj.getAttribute("data-skrolr-running")!="true") {
+	if(obj.getAttribute("data-skrolr-running")!="true" && !(params.forward // if not running AND not requested to go fd/bk
+														 || params.fwd
+														 || params.fd
+														 || params.right
+														 || params.rt
+														 || params.backward
+														 || params.back
+														 || params.bk
+														 || params.left
+														 || params.lt)) {
 		return;
 	}
 	if(params.stop) {
 		obj.setAttribute("data-skrolr-running","false");
+		return;
+	}
+
+	if(obj.getAttribute("data-skrolr-in-transition")=="true") { // don't allow stacked calls
 		return;
 	}
 
@@ -113,6 +156,7 @@ Object.prototype.skrolr = function(params, notFirst) {
 		var copy = lastChild.cloneNode(true);
 		obj.insertBefore(copy, obj.childNodes[0]);
 
+		obj.setAttribute("data-skrolr-in-transition","true");
 		obj.style.transition = '0s';
 		obj.style.left = '-'+copy.offsetWidth+'px';
 
@@ -121,6 +165,9 @@ Object.prototype.skrolr = function(params, notFirst) {
 			obj.style.left = '0';
 			obj.removeChild(lastChild);
 		});
+		setTimeout( function() {
+			obj.setAttribute("data-skrolr-in-transition","false");
+		}, transitionTime);
 	}
 	else { // forward
 		// get first object and move to end
@@ -128,10 +175,12 @@ Object.prototype.skrolr = function(params, notFirst) {
 		var copy = firstChild.cloneNode(true);
 		obj.appendChild(copy);
 	
+		obj.setAttribute("data-skrolr-in-transition","true");
 		obj.style.transition = transitionTime+'ms '+transitionTiming;
 		obj.style.left = '-'+firstChild.offsetWidth+'px';
 	
 		setTimeout( function() {
+			obj.setAttribute("data-skrolr-in-transition","false");
 			obj.style.transition = '0s';
 			obj.style.left = '0';
 			obj.removeChild(firstChild);
@@ -149,7 +198,7 @@ Object.prototype.skrolr = function(params, notFirst) {
 		|| params.left
 		|| params.lt)) {
 		setTimeout( function() {
-			obj.skrolr(params, true);
+			obj.skrolr(params);
 		}, scrollTime+transitionTime);
 	}
 }
