@@ -1,13 +1,24 @@
-function skrolr_showArrows(obj) {
-	obj.children[1].className = "skrolr-arrow skrolr-left";
-	obj.children[2].className = "skrolr-arrow skrolr-right";
-}
-function skrolr_removeArrows(obj) {
-	obj.children[1].className = "skrolr-arrow skrolr-left skrolr-hidden";
-	obj.children[2].className = "skrolr-arrow skrolr-right skrolr-hidden";
-}
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};
 
-Object.prototype.setWidth = function(sizes) {
+Object.prototype.skrolr_showArrows = function() {
+	"use strict";
+	this.children[1].className = "skrolr-arrow skrolr-left";
+	this.children[2].className = "skrolr-arrow skrolr-right";
+};
+Object.prototype.skrolr_removeArrows = function() {
+	"use strict";
+	this.children[1].className = "skrolr-arrow skrolr-left skrolr-hidden";
+	this.children[2].className = "skrolr-arrow skrolr-right skrolr-hidden";
+};
+
+var skrolr_id_count = 0;
+
+var skrolr_settimeout = [];
+var skrolr_num_objs = []; // for determining if left/right is faster
+
+Object.prototype.skrolr_setWidth = function(sizes) {
 	"use strict";
 	var width = this.offsetWidth;
 
@@ -34,10 +45,10 @@ Object.prototype.setWidth = function(sizes) {
 	for(var i=0; i<childsLen; i++) {
 		obj.children[i].style.width = eachWidth+"px";
 	}
-}
+};
 
 // get total width of all children of an object
-Object.prototype.childrenWidth = function() {
+Object.prototype.skrolr_childrenWidth = function() {
 	"use strict";	
 	var obj = this;
 	var children = obj.children;
@@ -46,12 +57,43 @@ Object.prototype.childrenWidth = function() {
 		totalWidth += children[i].offsetWidth;
 	}
 	return totalWidth;
-}
+};
+
+Object.prototype.skrolr_goto = function(loc) {
+	"use strict";
+	var curPos = obj.firstElementChild.getAttribute("data-skrolr-id");
+	var len = skrolr_num_objs[obj.getAttribute("data-skrolr-id")];
+
+	var distToLeft = (((curPos - loc)%len)+len)%len; // force positive result for modulus
+	var distToRight = (((loc - curPos)%len)+len)%len;
+	if(distToLeft==0 || distToRight==0) {
+		return;
+	}
+	if(distToLeft < distToRight) {
+		obj.skrolr({ lt:500 });
+	}
+	else {
+		obj.skrolr({ rt:500 });
+	}
+	setTimeout( function() {
+		obj.skrolr_goto(loc);
+	}, 500);
+};
 
 // main scroller function
 Object.prototype.skrolr = function(params) {
 	"use strict";
 	var obj = this;
+
+	// assign skrolr identifier
+	if(obj.getAttribute("data-skrolr-id")===null) {
+		obj.setAttribute("data-skrolr-id", skrolr_id_count++);
+		for(i=0; i<obj.children.length; i++) { // assign children identifier
+			obj.children[i].setAttribute("data-skrolr-id", i);
+		}
+		skrolr_num_objs[obj.getAttribute("data-skrolr-id")] = i; // store for later calculations regarding scrollTo()
+	}
+	var skrolr_id = obj.getAttribute("data-skrolr-id");
 
 	var scrollTime = (typeof params.scrollTime==="undefined") ? 3000 : params.scrollTime;
 	var transitionTime = (typeof params.transitionTime==="undefined") ? 500 : params.transitionTime;
@@ -74,8 +116,8 @@ Object.prototype.skrolr = function(params) {
 		parent.appendChild(obj);
 
 		if(typeof params.arrows !== "undefined") {
-			parent.onmouseenter = function() { skrolr_showArrows(obj.parentElement); };
-			parent.onmouseleave = function() { skrolr_removeArrows(obj.parentElement); };
+			parent.onmouseenter = function() { obj.parentElement.skrolr_showArrows(); };
+			parent.onmouseleave = function() { obj.parentElement.skrolr_removeArrows(); };
 
 			// create left arrow
 			var leftArrow = document.createElement("div");
@@ -91,11 +133,11 @@ Object.prototype.skrolr = function(params) {
 		}
 	}
 	if(obj.getAttribute("data-skrolr-running")===null && typeof params.numWide !== "undefined") { // if initialization AND numWide is defined, set width of each child element
-		obj.setWidth(params.numWide);
+		obj.skrolr_setWidth(params.numWide);
 	}
 
 	// if child elements do not fill parent, make copies until it does
-	while(obj.childrenWidth() < obj.parentElement.offsetWidth) {
+	while(obj.skrolr_childrenWidth() < obj.parentElement.offsetWidth) {
 		var childsLen = obj.children.length;
 		for(var i=0; i<childsLen; i++) {
 			var child = obj.children[i];
@@ -131,8 +173,18 @@ Object.prototype.skrolr = function(params) {
 		return;
 	}
 
-	if(obj.getAttribute("data-skrolr-in-transition")=="true") { // don't allow stacked calls
-		return;
+	// skrolr is in middle of transition
+	if(obj.getAttribute("data-skrolr-in-transition")=="true") {
+		// stop transition
+		obj.style.transition = "0s";
+		obj.style.left = getComputedStyle(obj).left;
+
+		// abort moving element
+		clearTimeout(skrolr_settimeout[skrolr_id]);
+		/*
+		var firstChild = obj.firstElementChild.getAttribute("data-skrolr-id");
+		var lastChild = obj.lastElementChild.getAttribute("data-skrolr-id");
+		*/
 	}
 
 	if(params.forward // set forward time
@@ -160,11 +212,11 @@ Object.prototype.skrolr = function(params) {
 		obj.style.transition = '0s';
 		obj.style.left = '-'+copy.offsetWidth+'px';
 
-		setTimeout( function() {
+		skrolr_settimeout[obj.getAttribute("data-skrolr-id")] = setTimeout( function() {
 			obj.style.transition = transitionTime+'ms '+transitionTiming;
 			obj.style.left = '0';
 			obj.removeChild(lastChild);
-		});
+		}, 0);
 		setTimeout( function() {
 			obj.setAttribute("data-skrolr-in-transition","false");
 		}, transitionTime);
@@ -179,7 +231,7 @@ Object.prototype.skrolr = function(params) {
 		obj.style.transition = transitionTime+'ms '+transitionTiming;
 		obj.style.left = '-'+firstChild.offsetWidth+'px';
 	
-		setTimeout( function() {
+		skrolr_settimeout[obj.getAttribute("data-skrolr-id")] = setTimeout( function() {
 			obj.setAttribute("data-skrolr-in-transition","false");
 			obj.style.transition = '0s';
 			obj.style.left = '0';
@@ -201,13 +253,13 @@ Object.prototype.skrolr = function(params) {
 			obj.skrolr(params);
 		}, scrollTime+transitionTime);
 	}
-}
+};
 
 // resize all child elements on window resize
 window.onresize = function() {
 	"use strict";
 	var allObjs = document.querySelectorAll("[data-skrolr-running]");
 	for(var i=0; i<allObjs.length; i++) {
-		allObjs[i].setWidth();
+		allObjs[i].skrolr_setWidth();
 	}
-}
+};
