@@ -7,7 +7,7 @@ skrolr library
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? 3.662 kB minified. Just the basics? 443 bytes.
+*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? 4.973 kB minified. Just the basics? 443 bytes.
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
@@ -126,5 +126,15 @@ If you want to add forward/back arrows to *skrolr*, just tell *skrolr* to show t
 ```javascript
 document.getElementById("skrolr").skrolr({
 	arrows: true
+});
+```
+
+### Buttons
+
+Control buttons that jump to a certain location are, **unlike most options**, included by default. If you don't want them, pass the parameter `buttons`
+
+```javascript
+document.getElementById("skrolr").skrolr({
+	buttons: false
 });
 ```
