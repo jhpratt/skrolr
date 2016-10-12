@@ -206,12 +206,13 @@ Object.prototype.skrolr = function(params) {
 
 	// skrolr is in middle of transition
 	if(obj.getAttribute("data-skrolr-in-transition")=="true") {
+		return;
 		// stop transition
-		obj.style.transition = "0s";
-		obj.style.left = getComputedStyle(obj).left;
+		//obj.style.transition = "0s";
+		//obj.style.left = getComputedStyle(obj).left;
 
 		// abort moving element
-		clearTimeout(skrolr_settimeout[skrolr_id]);
+		//clearTimeout(skrolr_settimeout[skrolr_id]);
 		/*
 		var firstChild = obj.firstElementChild.getAttribute("data-skrolr-id");
 		var lastChild = obj.lastElementChild.getAttribute("data-skrolr-id");
