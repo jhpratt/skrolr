@@ -1,16 +1,14 @@
-Number.prototype.mod = function(n) {
-    return ((this%n)+n)%n;
-};
-
-Object.prototype.skrolr_showArrows = function() {
+Object.prototype.skrolr_showOverlay = function() {
 	"use strict";
 	this.children[1].className = "skrolr-arrow skrolr-left";
 	this.children[2].className = "skrolr-arrow skrolr-right";
+	this.children[3].className = "skrolr-button-cont";
 };
-Object.prototype.skrolr_removeArrows = function() {
+Object.prototype.skrolr_removeOverlay = function() {
 	"use strict";
 	this.children[1].className = "skrolr-arrow skrolr-left skrolr-hidden";
 	this.children[2].className = "skrolr-arrow skrolr-right skrolr-hidden";
+	this.children[3].className = "skrolr-button-cont skrolr-hidden";
 };
 
 var skrolr_id_count = 0;
@@ -59,25 +57,43 @@ Object.prototype.skrolr_childrenWidth = function() {
 	return totalWidth;
 };
 
-Object.prototype.skrolr_goto = function(loc) {
+Object.prototype.skrolr_goto = function(loc, spd, origDist) {
 	"use strict";
+
 	var curPos = obj.firstElementChild.getAttribute("data-skrolr-id");
 	var len = skrolr_num_objs[obj.getAttribute("data-skrolr-id")];
 
+	if(typeof spd==="undefined") { spd=500; }
+
 	var distToLeft = (((curPos - loc)%len)+len)%len; // force positive result for modulus
 	var distToRight = (((loc - curPos)%len)+len)%len;
+
+	// ease-in-out over entire sequence
+	if(distToLeft==1 || distToRight==1) { // last move
+		var timing = "ease-out";
+	}
+	else if(typeof origDist==="undefined") { // first move
+		var timing = "ease-in";
+		var origDist = Math.min(distToLeft, distToRight);
+	}
+	else {
+		var timing = "linear";
+	}
+
+	// move
 	if(distToLeft==0 || distToRight==0) {
 		return;
 	}
 	if(distToLeft < distToRight) {
-		obj.skrolr({ lt:500 });
+		obj.skrolr({ lt: spd, transitionTiming: timing });
 	}
 	else {
-		obj.skrolr({ rt:500 });
+		obj.skrolr({ rt: spd, transitionTiming: timing });
 	}
+
 	setTimeout( function() {
-		obj.skrolr_goto(loc);
-	}, 500);
+		obj.skrolr_goto(loc, spd, origDist);
+	}, spd);
 };
 
 // main scroller function
@@ -102,7 +118,7 @@ Object.prototype.skrolr = function(params) {
 	// in case all you want is defaults
 	if(!params) { params = {}; }
 
-	if(obj.getAttribute("data-skrolr-running")===null) {
+	if(obj.getAttribute("data-skrolr-running")===null) { // initialize skrolr
 		// get rid of default margin and padding on <ul> (without transition)
 		obj.style.transition = "0";
 		obj.style.margin = "0";
@@ -116,8 +132,8 @@ Object.prototype.skrolr = function(params) {
 		parent.appendChild(obj);
 
 		if(typeof params.arrows !== "undefined") {
-			parent.onmouseenter = function() { obj.parentElement.skrolr_showArrows(); };
-			parent.onmouseleave = function() { obj.parentElement.skrolr_removeArrows(); };
+			parent.onmouseenter = function() { obj.parentElement.skrolr_showOverlay(); };
+			parent.onmouseleave = function() { obj.parentElement.skrolr_removeOverlay(); };
 
 			// create left arrow
 			var leftArrow = document.createElement("div");
@@ -130,6 +146,21 @@ Object.prototype.skrolr = function(params) {
 			rightArrow.className = "skrolr-arrow skrolr-right skrolr-hidden";
 			rightArrow.onclick = function() { obj.skrolr({ rt:transitionTime }) };
 			parent.appendChild(rightArrow);
+		}
+		if(typeof params.buttons === "undefined") {
+			// create buttons for goto()
+			var buttons = document.createElement("div"); // container
+			buttons.className = "skrolr-button-cont skrolr-hidden";
+			parent.appendChild(buttons);
+
+			for(var i=0; i<obj.children.length; i++) {
+				var btn = document.createElement("div"); // buttons (inside container)
+				btn.className = "skrolr-button";
+				btn.onclick = function(j) {
+					return function() { obj.skrolr_goto(j); };
+				}(i);
+				buttons.appendChild(btn);
+			}
 		}
 	}
 	if(obj.getAttribute("data-skrolr-running")===null && typeof params.numWide !== "undefined") { // if initialization AND numWide is defined, set width of each child element
