@@ -1,26 +1,24 @@
 <sub><super>NB: *skrolr* relies on CSS transitions, and has no JavaScript backup. All modern browsers support this, but IE9- does not.</super></sub>
 
-skrolr library
+*skrolr* library
 ===
 
 ### &#x2713; No dependencies.
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? 4.973 kB minified. Just the basics? 443 bytes.
+*skrolr* is a JavaScript library intended to make creating dynamic scroller/slider/marquee a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **443 bytes**.
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
 ```html
 <script src="skrolr.js"></script>
 <link rel="stylesheet" href="skrolr.css">
-<div>
-	<ul id="skrolr">
-		<li>1</li>
-		<li>2</li>
-		<li>3</li>
-	</ul>
-</div>
+<ul id="skrolr">
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+</ul>
 
 <script>
 document.getElementById("skrolr").skrolr();
