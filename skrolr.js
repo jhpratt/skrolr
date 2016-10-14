@@ -1,14 +1,20 @@
-Object.prototype.skrolr_showOverlay = function() {
+Object.prototype.skrolr_showArrows = function() {
 	"use strict";
 	this.children[1].className = "skrolr-arrow skrolr-left";
 	this.children[2].className = "skrolr-arrow skrolr-right";
-	this.children[3].className = "skrolr-button-cont";
 };
-Object.prototype.skrolr_removeOverlay = function() {
+Object.prototype.skrolr_removeArrows = function() {
 	"use strict";
 	this.children[1].className = "skrolr-arrow skrolr-left skrolr-hidden";
 	this.children[2].className = "skrolr-arrow skrolr-right skrolr-hidden";
-	this.children[3].className = "skrolr-button-cont skrolr-hidden";
+};
+Object.prototype.skrolr_showButtons = function() {
+	"use strict";
+	this.lastElementChild.className = "skrolr-button-cont";
+};
+Object.prototype.skrolr_removeButtons = function() {
+	"use strict";
+	this.lastElementChild.className = "skrolr-button-cont skrolr-hidden";
 };
 
 var skrolr_id_count = 0;
@@ -128,12 +134,26 @@ Object.prototype.skrolr = function(params) {
 		var parent = document.createElement("div");
 		parent.style.position = "relative";
 		parent.style.overflow = "hidden";
+
+		// set size of parent element
+		if(typeof params.height !== "undefined") {
+			parent.style.height = params.height;
+		}
+		if(typeof params.width !== "undefined") {
+			parent.style.width = params.width;
+		}
+		if(typeof params.size !== "undefined") {
+			var size = params.size.split(" ");
+			parent.style.width = size[0];
+			parent.style.height = size[1];
+		}
+
 		obj.parentElement.insertBefore(parent, obj);
 		parent.appendChild(obj);
 
-		if(typeof params.arrows !== "undefined") {
-			parent.onmouseenter = function() { obj.parentElement.skrolr_showOverlay(); };
-			parent.onmouseleave = function() { obj.parentElement.skrolr_removeOverlay(); };
+		if(params.arrows === true) {
+			parent.onmouseenter = function() { obj.parentElement.skrolr_showArrows(); };
+			parent.onmouseleave = function() { obj.parentElement.skrolr_removeArrows(); };
 
 			// create left arrow
 			var leftArrow = document.createElement("div");
@@ -147,7 +167,21 @@ Object.prototype.skrolr = function(params) {
 			rightArrow.onclick = function() { obj.skrolr({ rt:transitionTime }) };
 			parent.appendChild(rightArrow);
 		}
-		if(typeof params.buttons === "undefined") {
+		if(params.buttons !== false) {
+			// if we don't check for arrows functions, buttons will override it
+			if(String(parent.onmouseenter).includes("showArrows")) {
+				parent.onmouseenter = function() { obj.parentElement.skrolr_showArrows(); obj.parentElement.skrolr_showButtons(); };
+			}
+			else {
+				parent.onmouseenter = function() { obj.parentElement.skrolr_showButtons(); };
+			}
+			if(String(parent.onmouseleave).includes("removeArrows")) {
+				parent.onmouseleave = function() { obj.parentElement.skrolr_removeArrows(); obj.parentElement.skrolr_removeButtons(); };
+			}
+			else {
+				parent.onmouseleave = function() { obj.parentElement.skrolr_removeButtons(); };
+			}
+
 			// create buttons for goto()
 			var buttons = document.createElement("div"); // container
 			buttons.className = "skrolr-button-cont skrolr-hidden";
