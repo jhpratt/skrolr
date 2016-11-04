@@ -3,6 +3,8 @@
 skrolr library
 ===
 
+## [Live demo](https://jhpratt.github.io/skrolr)
+
 ### &#x2713; No dependencies.
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
@@ -136,5 +138,24 @@ Control buttons that jump to a certain location are, **unlike most options**, in
 ```javascript
 document.getElementById("skrolr").skrolr({
 	buttons: false
+});
+```
+
+### Size
+
+Give *skrolr* a certain size, no parent element required.
+
+```javascript
+document.getElementById("skrolr").skrolr({
+	width: '100%',
+	height: '400px'
+});
+```
+
+Or if you prefer a shorthand
+
+```javascript
+document.getElementById("skrolr").skrolr({
+	size: '100% 400px' // width then height
 });
 ```
