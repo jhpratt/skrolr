@@ -33,8 +33,8 @@ Let's set some timing when we initialize a *skrolr*.
 
 ```javascript
 document.getElementById("skrolr").skrolr({
-	scrollTime: 1000,
-	transitionTime: 350
+	waitTime: 1000,
+	moveTime: 350
 });
 ```
 
@@ -75,7 +75,7 @@ document.getElementById("skrolr").skrolr({
 });
 ```
 
-NB: `transitionTime` overrides `forward` and `backward`. Using them together will move the *skrolr* forward/backward, but the time will not be what is expected/wanted.
+NB: `moveTime` overrides `forward` and `backward`. Using them together will move the *skrolr* forward/backward, but the time will not be what is expected/wanted.
 
 NB: `forward` overrides `backward`
 
