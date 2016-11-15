@@ -4,6 +4,9 @@
 ===
 
 ## [Live demo](https://jhpratt.github.io/skrolr)
+[GitHub](https://github.com/jhpratt/skrolr) | 
+[npm](https://www.npmjs.com/package/skrolr) | 
+[CSS Script](http://www.cssscript.com/smooth-horizontal-slider-javascript-css3-skrolr/)
 
 ### &#x2713; No dependencies.
 ### &#x2713; Lightweight.
