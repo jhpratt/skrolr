@@ -1,3 +1,9 @@
+/* skrolr v0.3.3
+ * MIT license
+ * Jacob H. Pratt
+ * jhprattdev@gmail.com
+ */
+
 Object.prototype.skrolr_showArrows = function() {
 	"use strict";
 	this.children[1].className = "skrolr-arrow skrolr-left";
@@ -202,7 +208,7 @@ Object.prototype.skrolr = function(params) {
 	}
 
 	// if child elements do not fill parent, make copies until it does
-	while(obj.skrolr_childrenWidth() < obj.parentElement.offsetWidth) {
+	while(obj.skrolr_childrenWidth() <= obj.parentElement.offsetWidth) {
 		var childsLen = obj.children.length;
 		for(var i=0; i<childsLen; i++) {
 			var child = obj.children[i];
