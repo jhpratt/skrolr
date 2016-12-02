@@ -1,5 +1,7 @@
 <sub><super>NB: *skrolr* relies on CSS transitions, and has no JavaScript backup. All modern browsers support this, but IE9- does not.</super></sub>
 
+#### Note from the creator: please add your website to the [wiki](https://github.com/jhpratt/skrolr/wiki/Who-uses-skrolr%3F) so I know who's using *skrolr*! It's great seeing my work in use.
+
 *skrolr* library
 ===
 
