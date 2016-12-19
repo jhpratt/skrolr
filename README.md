@@ -14,7 +14,7 @@
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **402 bytes**.
+*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*? If all you want is the basics, its JavaScript and CSS is only **497 bytes** combined.
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
