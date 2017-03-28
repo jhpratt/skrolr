@@ -1,20 +1,26 @@
+/* skrolr v0.4.0
+ * MIT license
+ * Jacob H. Pratt
+ * jhprattdev@gmail.com
+ */
+
 Object.prototype.skrolr_showArrows = function() {
 	"use strict";
-	this.children[1].className = "skrolr-arrow skrolr-left";
-	this.children[2].className = "skrolr-arrow skrolr-right";
+	this.children[1].className = "sk-arrow sk-left";
+	this.children[2].className = "sk-arrow sk-right";
 };
 Object.prototype.skrolr_removeArrows = function() {
 	"use strict";
-	this.children[1].className = "skrolr-arrow skrolr-left skrolr-hidden";
-	this.children[2].className = "skrolr-arrow skrolr-right skrolr-hidden";
+	this.children[1].className = "sk-arrow sk-left sk-hidden";
+	this.children[2].className = "sk-arrow sk-right sk-hidden";
 };
 Object.prototype.skrolr_showButtons = function() {
 	"use strict";
-	this.lastElementChild.className = "skrolr-button-cont";
+	this.lastElementChild.className = "sk-button-cont";
 };
 Object.prototype.skrolr_removeButtons = function() {
 	"use strict";
-	this.lastElementChild.className = "skrolr-button-cont skrolr-hidden";
+	this.lastElementChild.className = "sk-button-cont sk-hidden";
 };
 
 var skrolr_id_count = 0;
@@ -27,9 +33,9 @@ Object.prototype.skrolr_setWidth = function(sizes) {
 	var width = this.offsetWidth;
 
 	if(typeof sizes !== "undefined") { // bind sizes object to scroller element if it hasn't been done
-		this.setAttribute("data-skrolr-sizes",JSON.stringify(sizes));
+		this.setAttribute("sk-sizes",JSON.stringify(sizes));
 	} else { // otherwise, get the data
-		var sizes = JSON.parse(this.getAttribute("data-skrolr-sizes"));
+		var sizes = JSON.parse(this.getAttribute("sk-sizes"));
 	}
 
 	// find the size each child element should be
@@ -66,8 +72,8 @@ Object.prototype.skrolr_childrenWidth = function() {
 Object.prototype.skrolr_goto = function(loc, spd, origDist) {
 	"use strict";
 
-	var curPos = obj.firstElementChild.getAttribute("data-skrolr-id");
-	var len = skrolr_num_objs[obj.getAttribute("data-skrolr-id")];
+	var curPos = obj.firstElementChild.getAttribute("sk-id");
+	var len = skrolr_num_objs[obj.getAttribute("sk-id")];
 
 	if(typeof spd==="undefined") { spd=500; }
 
@@ -108,14 +114,14 @@ Object.prototype.skrolr = function(params) {
 	var obj = this;
 
 	// assign skrolr identifier
-	if(obj.getAttribute("data-skrolr-id")===null) {
-		obj.setAttribute("data-skrolr-id", skrolr_id_count++);
+	if(obj.getAttribute("sk-id")===null) {
+		obj.setAttribute("sk-id", skrolr_id_count++);
 		for(i=0; i<obj.children.length; i++) { // assign children identifier
-			obj.children[i].setAttribute("data-skrolr-id", i);
+			obj.children[i].setAttribute("sk-id", i);
 		}
-		skrolr_num_objs[obj.getAttribute("data-skrolr-id")] = i; // store for later calculations regarding scrollTo()
+		skrolr_num_objs[obj.getAttribute("sk-id")] = i; // store for later calculations regarding scrollTo()
 	}
-	var skrolr_id = obj.getAttribute("data-skrolr-id");
+	var skrolr_id = obj.getAttribute("sk-id");
 
 	var waitTime = (typeof params.waitTime==="undefined") ? 3000 : params.waitTime;
 	var moveTime = (typeof params.moveTime==="undefined") ? 500 : params.moveTime;
@@ -124,7 +130,7 @@ Object.prototype.skrolr = function(params) {
 	// in case all you want is defaults
 	if(!params) { params = {}; }
 
-	if(obj.getAttribute("data-skrolr-running")===null) { // initialize skrolr
+	if(obj.getAttribute("sk-running")===null) { // initialize skrolr
 		// get rid of default margin and padding on <ul> (without transition)
 		obj.style.transition = "0";
 		obj.style.margin = "0";
@@ -157,13 +163,13 @@ Object.prototype.skrolr = function(params) {
 
 			// create left arrow
 			var leftArrow = document.createElement("div");
-			leftArrow.className = "skrolr-arrow skrolr-left skrolr-hidden";
+			leftArrow.className = "sk-arrow sk-left sk-hidden";
 			leftArrow.onclick = function() { obj.skrolr({ lt:moveTime }) };
 			parent.appendChild(leftArrow);
 	
 			// create right arrow
 			var rightArrow = document.createElement("div");
-			rightArrow.className = "skrolr-arrow skrolr-right skrolr-hidden";
+			rightArrow.className = "sk-arrow sk-right sk-hidden";
 			rightArrow.onclick = function() { obj.skrolr({ rt:moveTime }) };
 			parent.appendChild(rightArrow);
 		}
@@ -184,12 +190,12 @@ Object.prototype.skrolr = function(params) {
 
 			// create buttons for goto()
 			var buttons = document.createElement("div"); // container
-			buttons.className = "skrolr-button-cont skrolr-hidden";
+			buttons.className = "sk-button-cont sk-hidden";
 			parent.appendChild(buttons);
 
 			for(var i=0; i<obj.children.length; i++) {
 				var btn = document.createElement("div"); // buttons (inside container)
-				btn.className = "skrolr-button";
+				btn.className = "sk-button";
 				btn.onclick = function(j) {
 					return function() { obj.skrolr_goto(j); };
 				}(i);
@@ -197,12 +203,12 @@ Object.prototype.skrolr = function(params) {
 			}
 		}
 	}
-	if(obj.getAttribute("data-skrolr-running")===null && typeof params.numWide !== "undefined") { // if initialization AND numWide is defined, set width of each child element
+	if(obj.getAttribute("sk-running")===null && typeof params.numWide !== "undefined") { // if initialization AND numWide is defined, set width of each child element
 		obj.skrolr_setWidth(params.numWide);
 	}
 
 	// if child elements do not fill parent, make copies until it does
-	while(obj.skrolr_childrenWidth() < obj.parentElement.offsetWidth) {
+	while(obj.skrolr_childrenWidth() <= obj.parentElement.offsetWidth) {
 		var childsLen = obj.children.length;
 		for(var i=0; i<childsLen; i++) {
 			var child = obj.children[i];
@@ -212,34 +218,34 @@ Object.prototype.skrolr = function(params) {
 	}
 
 	// declare a scroller and don't start it
-	if(params.declare == true && obj.getAttribute("data-skrolr-running") === null) {
-		obj.setAttribute("data-skrolr-running","false");
+	if(params.declare === true && obj.getAttribute("sk-running") === null) {
+		obj.setAttribute("sk-running","false");
 		return;
 	}
 
 	// changes in running state
-	if(obj.getAttribute("data-skrolr-running")===null) {
-		obj.setAttribute("data-skrolr-running","true");
+	if(obj.getAttribute("sk-running")===null) {
+		obj.setAttribute("sk-running","true");
 	}
-	if(obj.getAttribute("data-skrolr-running")!="true" && !(params.forward // if not running AND not requested to go fd/bk
-														 || params.fwd
-														 || params.fd
-														 || params.right
-														 || params.rt
-														 || params.backward
-														 || params.back
-														 || params.bk
-														 || params.left
-														 || params.lt)) {
+	if(obj.getAttribute("sk-running")!="true" && !(params.forward // if not running AND not requested to go fd/bk
+	                                            || params.fwd
+                                                || params.fd
+                                                || params.right
+                                                || params.rt
+                                                || params.backward
+                                                || params.back
+                                                || params.bk
+                                                || params.left
+                                                || params.lt)) {
 		return;
 	}
 	if(params.stop) {
-		obj.setAttribute("data-skrolr-running","false");
+		obj.setAttribute("sk-running","false");
 		return;
 	}
 
 	// skrolr is in middle of transition
-	if(obj.getAttribute("data-skrolr-in-transition")=="true") {
+	if(obj.getAttribute("sk-in-transition")=="true") {
 		return;
 		// stop transition
 		//obj.style.transition = "0s";
@@ -248,8 +254,8 @@ Object.prototype.skrolr = function(params) {
 		// abort moving element
 		//clearTimeout(skrolr_settimeout[skrolr_id]);
 		/*
-		var firstChild = obj.firstElementChild.getAttribute("data-skrolr-id");
-		var lastChild = obj.lastElementChild.getAttribute("data-skrolr-id");
+		var firstChild = obj.firstElementChild.getAttribute("sk-id");
+		var lastChild = obj.lastElementChild.getAttribute("sk-id");
 		*/
 	}
 
@@ -258,7 +264,7 @@ Object.prototype.skrolr = function(params) {
 		|| params.fd
 		|| params.right
 		|| params.rt) {
-		obj.setAttribute("data-skrolr-running","false");
+		obj.setAttribute("sk-running","false");
 		var moveTime = params.forward || params.fwd || params.fd || params.right || params.rt || 500;
 	}
 	if(params.backward // back
@@ -266,7 +272,7 @@ Object.prototype.skrolr = function(params) {
 		|| params.bk
 		|| params.left
 		|| params.lt) {
-		obj.setAttribute("data-skrolr-running","false");
+		obj.setAttribute("sk-running","false");
 		var moveTime = params.backward || params.back || params.bk || params.left || params.lt || 500;
 
 		// get last object and move to front
@@ -274,17 +280,17 @@ Object.prototype.skrolr = function(params) {
 		var copy = lastChild.cloneNode(true);
 		obj.insertBefore(copy, obj.childNodes[0]);
 
-		obj.setAttribute("data-skrolr-in-transition","true");
+		obj.setAttribute("sk-in-transition","true");
 		obj.style.transition = '0s';
 		obj.style.left = '-'+copy.offsetWidth+'px';
 
-		skrolr_settimeout[obj.getAttribute("data-skrolr-id")] = setTimeout( function() {
+		skrolr_settimeout[obj.getAttribute("sk-id")] = setTimeout( function() {
 			obj.style.transition = moveTime+'ms '+transitionTiming;
 			obj.style.left = '0';
 			obj.removeChild(lastChild);
 		}, 0);
 		setTimeout( function() {
-			obj.setAttribute("data-skrolr-in-transition","false");
+			obj.setAttribute("sk-in-transition","false");
 		}, moveTime);
 	}
 	else { // forward
@@ -293,12 +299,12 @@ Object.prototype.skrolr = function(params) {
 		var copy = firstChild.cloneNode(true);
 		obj.appendChild(copy);
 	
-		obj.setAttribute("data-skrolr-in-transition","true");
+		obj.setAttribute("sk-in-transition","true");
 		obj.style.transition = moveTime+'ms '+transitionTiming;
 		obj.style.left = '-'+firstChild.offsetWidth+'px';
 	
-		skrolr_settimeout[obj.getAttribute("data-skrolr-id")] = setTimeout( function() {
-			obj.setAttribute("data-skrolr-in-transition","false");
+		skrolr_settimeout[obj.getAttribute("sk-id")] = setTimeout( function() {
+			obj.setAttribute("sk-in-transition","false");
 			obj.style.transition = '0s';
 			obj.style.left = '0';
 			obj.removeChild(firstChild);
@@ -324,7 +330,7 @@ Object.prototype.skrolr = function(params) {
 // resize all child elements on window resize
 window.onresize = function() {
 	"use strict";
-	var allObjs = document.querySelectorAll("[data-skrolr-running]");
+	var allObjs = document.querySelectorAll("[sk-running]");
 	for(var i=0; i<allObjs.length; i++) {
 		allObjs[i].skrolr_setWidth();
 	}
