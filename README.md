@@ -10,16 +10,20 @@
 ### &#x2713; Easy to use.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 *skrolr* is a JavaScript library intended to make creating dynamic scroller/slider/marquee a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **443 bytes**.
 =======
 *skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **428 bytes**.
 >>>>>>> c9c423ce51af0d129ce244d653f117ebd0ce6faf
+=======
+*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **407 bytes**.
+>>>>>>> b1045d9... Basic JS update
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
 ```html
-<script src="skrolr.js"></script>
-<link rel="stylesheet" href="skrolr.css">
+<script src="skrolr.basic.min.js"></script>
+<link rel="stylesheet" href="skrolr.basic.min.css">
 <ul id="skrolr">
 	<li>1</li>
 	<li>2</li>
