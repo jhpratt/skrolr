@@ -3,11 +3,17 @@
 *skrolr* library
 ===
 
+## [Live demo](https://jhpratt.github.io/skrolr)
+
 ### &#x2713; No dependencies.
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
+<<<<<<< HEAD
 *skrolr* is a JavaScript library intended to make creating dynamic scroller/slider/marquee a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **443 bytes**.
+=======
+*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **428 bytes**.
+>>>>>>> c9c423ce51af0d129ce244d653f117ebd0ce6faf
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
@@ -134,5 +140,24 @@ Control buttons that jump to a certain location are, **unlike most options**, in
 ```javascript
 document.getElementById("skrolr").skrolr({
 	buttons: false
+});
+```
+
+### Size
+
+Give *skrolr* a certain size, no parent element required.
+
+```javascript
+document.getElementById("skrolr").skrolr({
+	width: '100%',
+	height: '400px'
+});
+```
+
+Or if you prefer a shorthand
+
+```javascript
+document.getElementById("skrolr").skrolr({
+	size: '100% 400px' // width then height
 });
 ```
