@@ -1,3 +1,7 @@
+transpile:
+	@echo "Transpiling TypeScript"
+	@tsc skrolr.ts
+
 minify:
 	@echo "Minifying JavaScript"
 	@uglifyjs --compress --mangle --screw-ie8 --output min/skrolr.min.js -- skrolr.js
