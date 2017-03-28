@@ -14,19 +14,7 @@
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-*skrolr* is a JavaScript library intended to make creating dynamic scroller/slider/marquee a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **443 bytes**.
-=======
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **428 bytes**.
->>>>>>> c9c423ce51af0d129ce244d653f117ebd0ce6faf
-=======
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **407 bytes**.
->>>>>>> b1045d9... Basic JS update
-=======
-*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*'s JavaScript? If all you want is the basics, it's only **402 bytes**.
->>>>>>> 25181c5... Size reduction
+*skrolr* is a JavaScript library intended to make creating dynamic *skrolr* a piece of cake. *skrolr* has no dependencies (not even jQuery), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*? If all you want is the basics, it's only **495 bytes total**.
 
 Don't believe how easy it is? Here's all that's required to create a *skrolr*:
 
