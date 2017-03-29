@@ -40,11 +40,7 @@ Object.prototype.skrolr_setWidth = function(sizes) {
 
 	// find the size each child element should be
 	for(var i=0; i<sizes.length; i++) {
-		if(sizes[i][0] <= width && (typeof sizes[i][1] === "undefined" || sizes[i][1] === null)) { // [minSize,, numWide] match
-			var eachWidth = width/sizes[i][2];
-			break;
-		}
-		if(sizes[i][0] <= width && width < sizes[i][1]) { // [minSize, maxSize, numWide] match
+		if(sizes[i][0] <= width && (width < sizes[i][1] || typeof sizes[i][1] === "undefined" || sizes[i][1] === null)) { // match
 			var eachWidth = width/sizes[i][2];
 			break;
 		}
