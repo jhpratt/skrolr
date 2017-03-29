@@ -4,29 +4,53 @@
  * jhprattdev@gmail.com
  */
 
-Object.prototype.skrolr_showArrows = function() {
-	"use strict";
-	this.children[1].className = "sk-arrow sk-left";
-	this.children[2].className = "sk-arrow sk-right";
-};
-Object.prototype.skrolr_removeArrows = function() {
-	"use strict";
-	this.children[1].className = "sk-arrow sk-left sk-hidden";
-	this.children[2].className = "sk-arrow sk-right sk-hidden";
-};
-Object.prototype.skrolr_showButtons = function() {
-	"use strict";
-	this.lastElementChild.className = "sk-button-cont";
-};
-Object.prototype.skrolr_removeButtons = function() {
-	"use strict";
-	this.lastElementChild.className = "sk-button-cont sk-hidden";
-};
+let skIdCount: number = 0;
 
-var skrolr_id_count = 0;
-
-var skrolr_settimeout = [];
-var skrolr_num_objs = []; // for determining if left/right is faster
+class skrolr {
+	let settimeout = [];
+	let numObjs = []; // for determining if left/right is faster
+	
+	showArrows() {
+		this.children[1].className = "sk-arrow sk-left";
+		this.children[2].className = "sk-arrow sk-right";
+	}
+	removeArrows() {
+		this.children[1].className = "sk-arrow sk-left sk-hidden";
+		this.children[2].className = "sk-arrow sk-right sk-hidden";
+	}
+	showButtons() {
+		this.lastElementChild.className = "sk-button-cont";
+	}
+	removeButtons() {
+		this.lastElementChild.className = "sk-button-cont sk-hidden";
+	}
+	setWidth(sizes) {
+		//
+	}
+	childrenWidth() { // get total width of all children of an object
+		//
+	}
+	goto(loc, spd, origDist) {
+		//
+	}
+	start() { // original skrolr() prototype
+		//
+	}
+	
+	// take functions like `forward()`, `backward()`, `stop()`, `declare()`, etc. and split off
+	forward() {
+		//
+	}
+	backward() {
+		//
+	}
+	stop() {
+		//
+	}
+	declare() {
+		//
+	}
+}
 
 Object.prototype.skrolr_setWidth = function(sizes) {
 	"use strict";
