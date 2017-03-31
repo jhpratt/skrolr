@@ -8,7 +8,17 @@ var skrolr = (function () {
     function skrolr(elem, params) {
         this.curPos = 0;
         skrolrs.push(this);
-        this.elem = elem;
+        switch (typeof elem) {
+            case "object":
+                this.elem = elem;
+                break;
+            case "string":
+                this.elem = document.getElementById(elem);
+                break;
+            default:
+                console.log("Error: parameter passed must be DOM object or ID of a DOM object");
+                return;
+        }
         this.elem.className = "sk";
         this.numWide = params.numWide;
         this.numObjs = this.elem.children.length; // for determining if left/right is faster
@@ -111,12 +121,10 @@ var skrolr = (function () {
         var firstChild = this.elem.firstElementChild;
         var copy = firstChild.cloneNode(true);
         this.elem.appendChild(copy);
-        //this.elem.setAttribute("sk-in-transition","true");
         this.elem.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
         this.elem.style.left = '-' + firstChild.offsetWidth + 'px';
         var that = this;
         this.settimeout = setTimeout(function () {
-            //	that.elem.setAttribute("sk-in-transition","false");
             that.elem.style.transition = '0s';
             that.elem.style.left = '0';
             that.elem.removeChild(firstChild);
@@ -124,6 +132,18 @@ var skrolr = (function () {
     };
     skrolr.prototype.backward = function () {
         this.curPos = this.pmod(this.curPos - 1, this.numObjs);
+        // get last object and move to front
+        var lastChild = this.elem.lastElementChild;
+        var copy = lastChild.cloneNode(true);
+        this.elem.insertBefore(copy, this.elem.firstElementChild);
+        this.elem.style.transition = "0s";
+        this.elem.style.left = -1 * copy.offsetWidth + "px";
+        var that = this;
+        this.settimeout = setTimeout(function () {
+            that.elem.style.transition = that.moveTime + 'ms ' + that.transitionTiming;
+            that.elem.style.left = "0";
+            that.elem.removeChild(lastChild);
+        }, 0);
     };
     skrolr.prototype.stop = function () {
         //

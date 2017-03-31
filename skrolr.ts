@@ -22,7 +22,18 @@ class skrolr {
 	
 	public constructor(elem, params) {
 		skrolrs.push(this);
-		this.elem = elem;
+		
+		switch(typeof elem) {
+			case "object":
+				this.elem = elem;
+				break;
+			case "string":
+				this.elem = document.getElementById(elem);
+				break;
+			default:
+				console.log("Error: parameter passed must be DOM object or ID of a DOM object");
+				return;
+		}
 		this.elem.className = "sk";
 		
 		this.numWide = params.numWide;
@@ -132,16 +143,14 @@ class skrolr {
 		this.curPos = this.pmod(this.curPos+1, this.numObjs);
 		
 		const firstChild = <HTMLElement>this.elem.firstElementChild;
-		const copy = firstChild.cloneNode(true);
+		const copy = <HTMLElement>firstChild.cloneNode(true);
 		this.elem.appendChild(copy);
 		
-		//this.elem.setAttribute("sk-in-transition","true");
 		this.elem.style.transition = this.moveTime+'ms '+this.transitionTiming;
 		this.elem.style.left = '-'+firstChild.offsetWidth+'px';
 		
-		let that = this;
+		const that = this;
 		this.settimeout = setTimeout( function() {
-		//	that.elem.setAttribute("sk-in-transition","false");
 			that.elem.style.transition = '0s';
 			that.elem.style.left = '0';
 			that.elem.removeChild(firstChild);
@@ -149,6 +158,21 @@ class skrolr {
 	}
 	public backward(): void {
 		this.curPos = this.pmod(this.curPos-1, this.numObjs);
+
+		// get last object and move to front
+		const lastChild = <HTMLElement>this.elem.lastElementChild;
+		const copy = <HTMLElement>lastChild.cloneNode(true);
+		this.elem.insertBefore(copy, this.elem.firstElementChild);
+		
+		this.elem.style.transition = "0s";
+		this.elem.style.left = -1*copy.offsetWidth+"px";
+		
+		const that = this;
+		this.settimeout = setTimeout( function() { // force queue in correct order
+			that.elem.style.transition = that.moveTime+'ms '+that.transitionTiming;
+			that.elem.style.left = "0";
+			that.elem.removeChild(lastChild);
+		}, 0);
 	}
 	public stop(): void {
 		//
