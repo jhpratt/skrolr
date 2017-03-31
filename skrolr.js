@@ -33,21 +33,43 @@ var skrolr = (function () {
         this.parent.appendChild(this.elem);
         // end create parent
         if (params.arrows !== false) {
+            var leftArrow = document.createElement("div");
+            leftArrow.className = "sk-arrow sk-left sk-hidden";
+            this.parent.appendChild(leftArrow);
+            var rightArrow = document.createElement("div");
+            rightArrow.className = "sk-arrow sk-right sk-hidden";
+            this.parent.appendChild(rightArrow);
+            // show/hide on mouseover/out
+            var that_1 = this;
+            this.parent.addEventListener("mouseover", function () { that_1.toggleArrows(); });
+            this.parent.addEventListener("mouseout", function () { that_1.toggleArrows(); });
+        }
+        if (params.buttons !== false) {
+            var buttons = document.createElement("div");
+            buttons.className = "sk-button-cont sk-hidden";
+            this.parent.appendChild(buttons);
+            // show/hide on mouseover/out
+            var that_2 = this;
+            this.parent.addEventListener("mouseover", function () { that_2.toggleButtons(); });
+            this.parent.addEventListener("mouseout", function () { that_2.toggleButtons(); });
+            var _loop_1 = function (i, len) {
+                var btn = document.createElement("div"); // buttons (inside container)
+                btn.className = "sk-button";
+                btn.onclick = function () { that_2.goto(i); };
+                buttons.appendChild(btn);
+            };
+            // create individual buttons
+            for (var i = 0, len = this.elem.children.length; i < len; i++) {
+                _loop_1(i, len);
+            }
         }
     }
-    skrolr.prototype.showArrows = function () {
-        this.elem.children[1].className = "sk-arrow sk-left";
-        this.elem.children[2].className = "sk-arrow sk-right";
+    skrolr.prototype.toggleArrows = function () {
+        this.parent.children[1].classList.toggle("sk-hidden");
+        this.parent.children[2].classList.toggle("sk-hidden");
     };
-    skrolr.prototype.removeArrows = function () {
-        this.elem.children[1].className = "sk-arrow sk-left sk-hidden";
-        this.elem.children[2].className = "sk-arrow sk-right sk-hidden";
-    };
-    skrolr.prototype.showButtons = function () {
-        this.elem.lastElementChild.className = "sk-button-cont";
-    };
-    skrolr.prototype.removeButtons = function () {
-        this.elem.lastElementChild.className = "sk-button-cont sk-hidden";
+    skrolr.prototype.toggleButtons = function () {
+        this.parent.children[3].classList.toggle("sk-hidden");
     };
     skrolr.prototype.autoWidth = function () {
         // find the size each child element should be
@@ -71,6 +93,7 @@ var skrolr = (function () {
         return totalWidth;
     };
     skrolr.prototype.goto = function (loc, spd, origDist) {
+        if (spd === void 0) { spd = 500; }
         //
     };
     skrolr.prototype.start = function () {

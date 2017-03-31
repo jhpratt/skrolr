@@ -17,7 +17,7 @@ class skrolr {
 	
 	public constructor(elem, params) {
 		skrolrs.push(this);
-		this.elem = <HTMLElement>elem;
+		this.elem = elem;
 		elem.className = "sk";
 		
 		this.size = params.size;
@@ -48,24 +48,47 @@ class skrolr {
 		this.parent.appendChild(this.elem);
 		// end create parent
 		
-		if( params.arrows !== false ) {
+		if( params.arrows !== false ) { // create arrows, hidden
+			let leftArrow: HTMLElement = document.createElement("div");
+			leftArrow.className = "sk-arrow sk-left sk-hidden";
+			this.parent.appendChild(leftArrow);
 			
+			let rightArrow: HTMLElement = document.createElement("div");
+			rightArrow.className = "sk-arrow sk-right sk-hidden";
+			this.parent.appendChild(rightArrow);
+			
+			// show/hide on mouseover/out
+			const that = this;
+			this.parent.addEventListener("mouseover", function() { that.toggleArrows(); });
+			this.parent.addEventListener("mouseout", function() { that.toggleArrows(); });
+		}
+		
+		if( params.buttons !== false ) { // create buttons, hidden
+			let buttons: HTMLElement = document.createElement("div");
+			buttons.className = "sk-button-cont sk-hidden";
+			this.parent.appendChild(buttons);
+			
+			// show/hide on mouseover/out
+			const that = this;
+			this.parent.addEventListener("mouseover", function() { that.toggleButtons(); });
+			this.parent.addEventListener("mouseout", function() { that.toggleButtons(); });
+			
+			// create individual buttons
+			for(let i=0, len=this.elem.children.length; i<len; i++) {
+				let btn = document.createElement("div"); // buttons (inside container)
+				btn.className = "sk-button";
+				btn.onclick = function() { that.goto(i); };
+				buttons.appendChild(btn);
+			}
 		}
 	}
 	
-	public showArrows(): void {
-		this.elem.children[1].className = "sk-arrow sk-left";
-		this.elem.children[2].className = "sk-arrow sk-right";
+	public toggleArrows(): void {
+		this.parent.children[1].classList.toggle("sk-hidden");
+		this.parent.children[2].classList.toggle("sk-hidden");
 	}
-	public removeArrows(): void {
-		this.elem.children[1].className = "sk-arrow sk-left sk-hidden";
-		this.elem.children[2].className = "sk-arrow sk-right sk-hidden";
-	}
-	public showButtons(): void {
-		this.elem.lastElementChild.className = "sk-button-cont";
-	}
-	public removeButtons(): void {
-		this.elem.lastElementChild.className = "sk-button-cont sk-hidden";
+	public toggleButtons(): void {
+		this.parent.children[3].classList.toggle("sk-hidden");
 	}
 	public autoWidth(): void {
 		// find the size each child element should be
@@ -88,7 +111,7 @@ class skrolr {
 		}
 		return totalWidth;
 	}
-	public goto(loc, spd, origDist) {
+	public goto(loc, spd=500, origDist?) {
 		//
 	}
 	public start() { // original skrolr() prototype
