@@ -6,13 +6,15 @@
 var skrolrs = [];
 var skrolr = (function () {
     function skrolr(elem, params) {
+        this.curPos = 0;
         skrolrs.push(this);
         this.elem = elem;
-        elem.className = "sk";
-        this.size = params.size;
+        this.elem.className = "sk";
         this.numWide = params.numWide;
-        this.settimeout = [];
-        this.numObjs = 0; // for determining if left/right is faster
+        this.numObjs = this.elem.children.length; // for determining if left/right is faster
+        this.moveTime = params.moveTime || 500;
+        this.waitTime = params.waitTime || 3000;
+        this.transitionTiming = params.transitionTiming || "ease-in-out";
         // create parent element
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
@@ -33,14 +35,16 @@ var skrolr = (function () {
         this.parent.appendChild(this.elem);
         // end create parent
         if (params.arrows !== false) {
+            var that_1 = this;
             var leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
+            leftArrow.onclick = function () { that_1.backward(); };
             this.parent.appendChild(leftArrow);
             var rightArrow = document.createElement("div");
             rightArrow.className = "sk-arrow sk-right sk-hidden";
+            rightArrow.onclick = function () { that_1.forward(); };
             this.parent.appendChild(rightArrow);
             // show/hide on mouseover/out
-            var that_1 = this;
             this.parent.addEventListener("mouseover", function () { that_1.toggleArrows(); });
             this.parent.addEventListener("mouseout", function () { that_1.toggleArrows(); });
         }
@@ -64,6 +68,7 @@ var skrolr = (function () {
             }
         }
     }
+    skrolr.prototype.pmod = function (x, n) { return ((x % n) + n) % n; };
     skrolr.prototype.toggleArrows = function () {
         this.parent.children[1].classList.toggle("sk-hidden");
         this.parent.children[2].classList.toggle("sk-hidden");
@@ -80,8 +85,9 @@ var skrolr = (function () {
             }
         }
         // set each child element to calculated width
-        for (var i = 0, len = this.elem.children.length; i < len; i++) {
-            this.elem.children[i].style.width = this.eachWidth + "px";
+        var children = this.elem.children;
+        for (var i = 0, len = children.length; i < len; i++) {
+            children[i].style.width = this.eachWidth + "px";
         }
     };
     skrolr.prototype.childrenWidth = function () {
@@ -101,10 +107,23 @@ var skrolr = (function () {
     };
     // take functions like `forward()`, `backward()`, `stop()` etc. and split off
     skrolr.prototype.forward = function () {
-        //
+        this.curPos = this.pmod(this.curPos + 1, this.numObjs);
+        var firstChild = this.elem.firstElementChild;
+        var copy = firstChild.cloneNode(true);
+        this.elem.appendChild(copy);
+        //this.elem.setAttribute("sk-in-transition","true");
+        this.elem.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
+        this.elem.style.left = '-' + firstChild.offsetWidth + 'px';
+        var that = this;
+        this.settimeout = setTimeout(function () {
+            //	that.elem.setAttribute("sk-in-transition","false");
+            that.elem.style.transition = '0s';
+            that.elem.style.left = '0';
+            that.elem.removeChild(firstChild);
+        }, this.moveTime);
     };
     skrolr.prototype.backward = function () {
-        //
+        this.curPos = this.pmod(this.curPos - 1, this.numObjs);
     };
     skrolr.prototype.stop = function () {
         //
