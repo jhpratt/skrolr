@@ -23,8 +23,9 @@ li { width: calc(100% / 6); }
 
 <script>
 // initialize scroller
-obj = document.getElementById("slide-container");
-obj.skrolr ({
+elem = document.getElementById("slide-container");
+
+obj = new skrolr(elem, {
 	waitTime: 2000,
 	moveTime: 750,
 	arrows: true,
