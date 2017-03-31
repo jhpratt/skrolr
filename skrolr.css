@@ -1,4 +1,4 @@
-*[sk-running] {
+.sk {
 	padding: 0;
 	margin: 0;
 	font-size: 0;
@@ -6,7 +6,7 @@
 	left: 0;
 	white-space: nowrap;
 }
-*[sk-running] li {
+.sk li {
 	font-size: initial;
 	height: 100%;
 	vertical-align: top;
