@@ -10,13 +10,12 @@ class skrolr {
 	private parent: HTMLElement;
 	private elem: HTMLElement;
 	private numWide: number[][]; // array of options
-	private settimeout: number; // typeof setTimeout is number
-	private eachWidth: number;
 	private numObjs: number;
 	private curPos: number = 0;
 	private moveTime: number;
 	private waitTime: number;
 	private transitionTiming: string;
+	private interval: number;
 	
 	pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
@@ -78,8 +77,8 @@ class skrolr {
 			this.parent.appendChild(rightArrow);
 			
 			// show/hide on mouseover/out
-			this.parent.addEventListener("mouseover", function() { that.toggleArrows(); });
-			this.parent.addEventListener("mouseout", function() { that.toggleArrows(); });
+			this.parent.addEventListener("mouseover", function() { that.stop(); that.toggleArrows(); });
+			this.parent.addEventListener("mouseout", function() { that.stop(); that.toggleArrows(); });
 		}
 		
 		if( params.buttons !== false ) { // create buttons, hidden
@@ -100,6 +99,8 @@ class skrolr {
 				buttons.appendChild(btn);
 			}
 		}
+		
+		this.start();
 	}
 	
 	public toggleArrows(): void {
@@ -109,18 +110,15 @@ class skrolr {
 	public toggleButtons(): void {
 		this.parent.children[3].classList.toggle("sk-hidden");
 	}
-	public autoWidth(): void {
-		// find the size each child element should be
+	public autoWidth(): void { // set all children to correct size (in pct)
 		for( let i=0, len=this.numWide.length; i<len; i++ ) {
 			if( this.numWide[i][0] <= this.elem.offsetWidth && (this.elem.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null) ) { // match
-				this.eachWidth = this.elem.offsetWidth/this.numWide[i][2];
+				const children = this.elem.children;
+				for( let i=0, len=children.length; i<len; i++ ) { // set all children
+					(<HTMLElement>children[i]).style.width = 100/this.numWide[i][2]+"%";
+				}
 				break;
 			}
-		}
-		// set each child element to calculated width
-		const children = this.elem.children;
-		for( let i=0, len=children.length; i<len; i++ ) {
-			(<HTMLElement>children[i]).style.width = this.eachWidth+"px";
 		}
 	}
 	private childrenWidth(): number { // get total width of all children of an object
@@ -131,14 +129,7 @@ class skrolr {
 		}
 		return totalWidth;
 	}
-	public goto(loc, spd=500, origDist?) {
-		//
-	}
-	public start(): void { // original skrolr() prototype
-		//
-	}
 	
-	// take functions like `forward()`, `backward()`, `stop()` etc. and split off
 	public forward(): void {
 		this.curPos = this.pmod(this.curPos+1, this.numObjs);
 		
@@ -150,7 +141,7 @@ class skrolr {
 		this.elem.style.left = '-'+firstChild.offsetWidth+'px';
 		
 		const that = this;
-		this.settimeout = setTimeout( function() {
+		setTimeout( function() {
 			that.elem.style.transition = '0s';
 			that.elem.style.left = '0';
 			that.elem.removeChild(firstChild);
@@ -168,14 +159,26 @@ class skrolr {
 		this.elem.style.left = -1*copy.offsetWidth+"px";
 		
 		const that = this;
-		this.settimeout = setTimeout( function() { // force queue in correct order
+		setTimeout( function() { // force queue in correct order
 			that.elem.style.transition = that.moveTime+'ms '+that.transitionTiming;
 			that.elem.style.left = "0";
-			that.elem.removeChild(lastChild);
 		}, 0);
+		setTimeout( function() {
+			that.elem.removeChild(lastChild);
+		}, this.moveTime );
+	}
+	public goto(loc, origDist?) {
+		//
+	}
+	
+	public start(): void {
+		const that = this;
+		this.interval = setInterval( function() {
+			that.forward();
+		}, this.moveTime + this.waitTime );
 	}
 	public stop(): void {
-		//
+		clearInterval( this.interval );
 	}
 }
 

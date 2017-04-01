@@ -55,8 +55,8 @@ var skrolr = (function () {
             rightArrow.onclick = function () { that_1.forward(); };
             this.parent.appendChild(rightArrow);
             // show/hide on mouseover/out
-            this.parent.addEventListener("mouseover", function () { that_1.toggleArrows(); });
-            this.parent.addEventListener("mouseout", function () { that_1.toggleArrows(); });
+            this.parent.addEventListener("mouseover", function () { that_1.stop(); that_1.toggleArrows(); });
+            this.parent.addEventListener("mouseout", function () { that_1.stop(); that_1.toggleArrows(); });
         }
         if (params.buttons !== false) {
             var buttons = document.createElement("div");
@@ -77,6 +77,7 @@ var skrolr = (function () {
                 _loop_1(i, len);
             }
         }
+        this.start();
     }
     skrolr.prototype.pmod = function (x, n) { return ((x % n) + n) % n; };
     skrolr.prototype.toggleArrows = function () {
@@ -87,17 +88,14 @@ var skrolr = (function () {
         this.parent.children[3].classList.toggle("sk-hidden");
     };
     skrolr.prototype.autoWidth = function () {
-        // find the size each child element should be
         for (var i = 0, len = this.numWide.length; i < len; i++) {
             if (this.numWide[i][0] <= this.elem.offsetWidth && (this.elem.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null)) {
-                this.eachWidth = this.elem.offsetWidth / this.numWide[i][2];
+                var children = this.elem.children;
+                for (var i_1 = 0, len_1 = children.length; i_1 < len_1; i_1++) {
+                    children[i_1].style.width = 100 / this.numWide[i_1][2] + "%";
+                }
                 break;
             }
-        }
-        // set each child element to calculated width
-        var children = this.elem.children;
-        for (var i = 0, len = children.length; i < len; i++) {
-            children[i].style.width = this.eachWidth + "px";
         }
     };
     skrolr.prototype.childrenWidth = function () {
@@ -108,14 +106,6 @@ var skrolr = (function () {
         }
         return totalWidth;
     };
-    skrolr.prototype.goto = function (loc, spd, origDist) {
-        if (spd === void 0) { spd = 500; }
-        //
-    };
-    skrolr.prototype.start = function () {
-        //
-    };
-    // take functions like `forward()`, `backward()`, `stop()` etc. and split off
     skrolr.prototype.forward = function () {
         this.curPos = this.pmod(this.curPos + 1, this.numObjs);
         var firstChild = this.elem.firstElementChild;
@@ -124,7 +114,7 @@ var skrolr = (function () {
         this.elem.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
         this.elem.style.left = '-' + firstChild.offsetWidth + 'px';
         var that = this;
-        this.settimeout = setTimeout(function () {
+        setTimeout(function () {
             that.elem.style.transition = '0s';
             that.elem.style.left = '0';
             that.elem.removeChild(firstChild);
@@ -139,14 +129,25 @@ var skrolr = (function () {
         this.elem.style.transition = "0s";
         this.elem.style.left = -1 * copy.offsetWidth + "px";
         var that = this;
-        this.settimeout = setTimeout(function () {
+        setTimeout(function () {
             that.elem.style.transition = that.moveTime + 'ms ' + that.transitionTiming;
             that.elem.style.left = "0";
-            that.elem.removeChild(lastChild);
         }, 0);
+        setTimeout(function () {
+            that.elem.removeChild(lastChild);
+        }, this.moveTime);
+    };
+    skrolr.prototype.goto = function (loc, origDist) {
+        //
+    };
+    skrolr.prototype.start = function () {
+        var that = this;
+        this.interval = setInterval(function () {
+            that.forward();
+        }, this.moveTime + this.waitTime);
     };
     skrolr.prototype.stop = function () {
-        //
+        clearInterval(this.interval);
     };
     return skrolr;
 }());
