@@ -69,6 +69,12 @@
 	cursor: pointer;
 	z-index: 1000;
 }
+@supports (shape-outside: circle) {
+	.sk-button {
+		-webkit-shape-outside: circle;
+		shape-outside: circle;
+	}
+}
 .sk-button-cont.sk-hidden {
 	transition: visibility 0s 0.5s, opacity 0.5s, bottom 0.5s;
 	visibility: hidden;
