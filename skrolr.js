@@ -94,38 +94,15 @@ class skrolr {
         return totalWidth;
     }
     forward() {
-        this.curPos = this.pmod(this.curPos + 1, this.numObjs);
-        const firstChild = this.root.firstElementChild;
-        const copy = firstChild.cloneNode(true);
-        this.root.appendChild(copy);
-        this.root.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
-        this.root.style.left = '-' + firstChild.offsetWidth + 'px';
-        const that = this;
-        setTimeout(function () {
-            that.root.style.transition = '0s';
-            that.root.style.left = '0';
-            that.root.removeChild(firstChild);
-        }, this.moveTime);
+        this.goto(this.curPos + 1);
     }
     backward() {
-        this.curPos = this.pmod(this.curPos - 1, this.numObjs);
-        const lastChild = this.root.lastElementChild;
-        const copy = lastChild.cloneNode(true);
-        this.root.insertBefore(copy, this.root.firstElementChild);
-        this.root.style.transition = "0s";
-        this.root.style.left = "-" + copy.offsetWidth + "px";
-        const that = this;
-        setTimeout(function () {
-            that.root.style.transition = that.moveTime + 'ms ' + that.transitionTiming;
-            that.root.style.left = "0";
-        }, 0);
-        setTimeout(function () {
-            that.root.removeChild(lastChild);
-        }, this.moveTime);
+        this.goto(this.curPos - 1);
     }
     goto(loc) {
         if (this.interval)
             clearInterval(this.interval);
+        loc = this.pmod(loc, this.numObjs);
         let distToLeft = this.pmod(this.curPos - loc, this.numObjs);
         let distToRight = this.pmod(loc - this.curPos, this.numObjs);
         if (!distToLeft || !distToRight)

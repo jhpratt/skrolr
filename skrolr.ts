@@ -133,46 +133,17 @@ class skrolr {
 	// TODO implement childrenWidth() to duplicate elements if width is too small
 	
 	public forward(): void {
-		this.curPos = this.pmod(this.curPos+1, this.numObjs);
-		
-		const firstChild = <HTMLElement>this.root.firstElementChild;
-		const copy = <HTMLElement>firstChild.cloneNode(true);
-		this.root.appendChild(copy);
-		
-		this.root.style.transition = this.moveTime+'ms '+this.transitionTiming;
-		this.root.style.left = '-'+firstChild.offsetWidth+'px';
-		
-		const that = this;
-		setTimeout( function() {
-			that.root.style.transition = '0s';
-			that.root.style.left = '0';
-			that.root.removeChild(firstChild);
-		}, this.moveTime);
+		this.goto( this.curPos+1 );
 	}
 	public backward(): void {
-		this.curPos = this.pmod(this.curPos-1, this.numObjs);
-
-		// get last object and move to front
-		const lastChild = <HTMLElement>this.root.lastElementChild;
-		const copy = <HTMLElement>lastChild.cloneNode(true);
-		this.root.insertBefore(copy, this.root.firstElementChild);
-		
-		this.root.style.transition = "0s";
-		this.root.style.left = "-"+copy.offsetWidth+"px";
-		
-		const that = this;
-		setTimeout( function() { // force queue in correct order
-			that.root.style.transition = that.moveTime+'ms '+that.transitionTiming;
-			that.root.style.left = "0";
-		}, 0);
-		setTimeout( function() {
-			that.root.removeChild(lastChild);
-		}, this.moveTime );
+		this.goto( this.curPos-1 );
 	}
 	
 	public goto(loc: number) {
 		// stop if running
 		if( this.interval ) clearInterval( this.interval );
+		
+		loc = this.pmod(loc, this.numObjs);
 		
 		let distToLeft: number = this.pmod(this.curPos-loc, this.numObjs);
 		let distToRight: number = this.pmod(loc-this.curPos, this.numObjs);
