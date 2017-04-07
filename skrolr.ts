@@ -170,7 +170,10 @@ class skrolr {
 		}, this.moveTime );
 	}
 	
-	public goto(loc) {
+	public goto(loc: number) {
+		// stop if running
+		if( this.interval ) clearInterval( this.interval );
+		
 		let distToLeft: number = this.pmod(this.curPos-loc, this.numObjs);
 		let distToRight: number = this.pmod(loc-this.curPos, this.numObjs);
 		
@@ -207,8 +210,10 @@ class skrolr {
 			// copy n elements from end to beginning
 			const children = Array.from( <HTMLCollection>this.root.children ).slice(-distToLeft);
 			let sumWidth: number = 0;
-			let i; for( i in children ) {
-				const obj = <HTMLElement>children[i];
+			let i;
+			let len = children.length; // to go in reverse order
+			for( i in children ) {
+				const obj = <HTMLElement>children[len-i-1]; // -1 because len is 1-index, not 0-index
 				sumWidth += obj.offsetWidth;
 				const copy = obj.cloneNode(true);
 				this.root.insertBefore(copy, that.root.firstChild);

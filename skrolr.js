@@ -124,6 +124,8 @@ class skrolr {
         }, this.moveTime);
     }
     goto(loc) {
+        if (this.interval)
+            clearInterval(this.interval);
         let distToLeft = this.pmod(this.curPos - loc, this.numObjs);
         let distToRight = this.pmod(loc - this.curPos, this.numObjs);
         if (!distToLeft || !distToRight)
@@ -156,8 +158,9 @@ class skrolr {
             const children = Array.from(this.root.children).slice(-distToLeft);
             let sumWidth = 0;
             let i;
+            let len = children.length;
             for (i in children) {
-                const obj = children[i];
+                const obj = children[len - i - 1];
                 sumWidth += obj.offsetWidth;
                 const copy = obj.cloneNode(true);
                 this.root.insertBefore(copy, that.root.firstChild);
