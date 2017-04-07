@@ -77,8 +77,8 @@ class skrolr {
 			this.parent.appendChild(rightArrow);
 			
 			// show/hide on mouseover/out
-			this.parent.addEventListener("mouseover", function() { that.stop(); that.toggleArrows(); });
-			this.parent.addEventListener("mouseout", function() { that.stop(); that.toggleArrows(); });
+			this.parent.addEventListener("mouseover", function() { that.toggleArrows(); });
+			this.parent.addEventListener("mouseout", function() { that.toggleArrows(); });
 		}
 		
 		if( params.buttons !== false ) { // create buttons, hidden
@@ -133,15 +133,15 @@ class skrolr {
 	// TODO implement childrenWidth() to duplicate elements if width is too small
 	
 	public forward(): void {
-		this.goto( this.curPos+1 );
+		this.goto( this.curPos+1, true );
 	}
 	public backward(): void {
-		this.goto( this.curPos-1 );
+		this.goto( this.curPos-1, true );
 	}
 	
-	public goto(loc: number) {
+	public goto(loc: number, noStop?: boolean) {
 		// stop if running
-		if( this.interval ) clearInterval( this.interval );
+		if( !noStop ) clearInterval( this.interval );
 		
 		loc = this.pmod(loc, this.numObjs);
 		

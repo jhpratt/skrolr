@@ -47,8 +47,8 @@ class skrolr {
             rightArrow.className = "sk-arrow sk-right sk-hidden";
             rightArrow.onclick = function () { that.forward(); };
             this.parent.appendChild(rightArrow);
-            this.parent.addEventListener("mouseover", function () { that.stop(); that.toggleArrows(); });
-            this.parent.addEventListener("mouseout", function () { that.stop(); that.toggleArrows(); });
+            this.parent.addEventListener("mouseover", function () { that.toggleArrows(); });
+            this.parent.addEventListener("mouseout", function () { that.toggleArrows(); });
         }
         if (params.buttons !== false) {
             let buttons = document.createElement("div");
@@ -94,13 +94,13 @@ class skrolr {
         return totalWidth;
     }
     forward() {
-        this.goto(this.curPos + 1);
+        this.goto(this.curPos + 1, true);
     }
     backward() {
-        this.goto(this.curPos - 1);
+        this.goto(this.curPos - 1, true);
     }
-    goto(loc) {
-        if (this.interval)
+    goto(loc, noStop) {
+        if (!noStop)
             clearInterval(this.interval);
         loc = this.pmod(loc, this.numObjs);
         let distToLeft = this.pmod(this.curPos - loc, this.numObjs);
