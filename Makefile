@@ -1,6 +1,6 @@
 transpile:
 	@echo "Transpiling TypeScript"
-	@tsc skrolr.ts
+	@tsc
 
 minify: minify-js minify-css
 
