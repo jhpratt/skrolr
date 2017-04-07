@@ -8,35 +8,35 @@ let skrolrs: skrolr[] = [];
 class skrolr {
 	// initialize variables for later
 	private parent: HTMLElement;
-	private elem: HTMLElement;
-	private numWide: number[][]; // array of options
+	private root: HTMLElement;
 	private numObjs: number;
 	private curPos: number = 0;
-	private moveTime: number;
-	private waitTime: number;
-	private transitionTiming: string;
 	private interval: number;
+	public numWide: number[][]; // array of options
+	public moveTime: number;
+	public waitTime: number;
+	public transitionTiming: string;
 	
-	pmod(x:number, n:number): number { return ((x%n)+n)%n; }
+	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
-	public constructor(elem, params) {
+	public constructor(root: HTMLElement|string, params) {
 		skrolrs.push(this);
 		
-		switch(typeof elem) {
+		switch(typeof root) {
 			case "object":
-				this.elem = elem;
+				this.root = <HTMLElement>root;
 				break;
 			case "string":
-				this.elem = document.getElementById(elem);
+				this.root = document.getElementById(<string>root);
 				break;
 			default:
 				console.log("Error: parameter passed must be DOM object or ID of a DOM object");
 				return;
 		}
-		this.elem.className = "sk";
+		this.root.className = "sk";
 		
 		this.numWide = params.numWide;
-		this.numObjs = this.elem.children.length; // for determining if left/right is faster
+		this.numObjs = this.root.children.length; // for determining if left/right is faster
 		this.moveTime = params.moveTime || 500;
 		this.waitTime = params.waitTime || 3000;
 		this.transitionTiming = params.transitionTiming || "ease-in-out";
@@ -59,8 +59,8 @@ class skrolr {
 			this.parent.style.height = size[1];
 		}
 		
-		this.elem.parentElement.insertBefore(this.parent, this.elem);
-		this.parent.appendChild(this.elem);
+		this.root.parentElement.insertBefore(this.parent, this.root);
+		this.parent.appendChild(this.root);
 		// end create parent
 		
 		if( params.arrows !== false ) { // create arrows, hidden
@@ -92,7 +92,7 @@ class skrolr {
 			this.parent.addEventListener("mouseout", function() { that.toggleButtons(); });
 			
 			// create individual buttons
-			for(let i=0, len=this.elem.children.length; i<len; i++) {
+			for(let i=0, len=this.root.children.length; i<len; i++) {
 				let btn = document.createElement("div"); // buttons (inside container)
 				btn.className = "sk-button";
 				btn.onclick = function() { that.goto(i); };
@@ -112,8 +112,8 @@ class skrolr {
 	}
 	public autoWidth(): void { // set all children to correct size (in pct)
 		for( let i=0, len=this.numWide.length; i<len; i++ ) {
-			if( this.numWide[i][0] <= this.elem.offsetWidth && (this.elem.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null) ) { // match
-				const children = this.elem.children;
+			if( this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null) ) { // match
+				const children = this.root.children;
 				for( let i=0, len=children.length; i<len; i++ ) { // set all children
 					(<HTMLElement>children[i]).style.width = 100/this.numWide[i][2]+"%";
 				}
@@ -122,7 +122,7 @@ class skrolr {
 		}
 	}
 	private childrenWidth(): number { // get total width of all children of an object
-		const children = this.elem.children;
+		const children = this.root.children;
 		let totalWidth: number = 0;
 		for( let i=0, len=children.length; i<len; i++ ) {
 			totalWidth += (<HTMLElement>children[i]).offsetWidth;
@@ -130,45 +130,104 @@ class skrolr {
 		return totalWidth;
 	}
 	
+	// TODO implement childrenWidth() to duplicate elements if width is too small
+	
 	public forward(): void {
 		this.curPos = this.pmod(this.curPos+1, this.numObjs);
 		
-		const firstChild = <HTMLElement>this.elem.firstElementChild;
+		const firstChild = <HTMLElement>this.root.firstElementChild;
 		const copy = <HTMLElement>firstChild.cloneNode(true);
-		this.elem.appendChild(copy);
+		this.root.appendChild(copy);
 		
-		this.elem.style.transition = this.moveTime+'ms '+this.transitionTiming;
-		this.elem.style.left = '-'+firstChild.offsetWidth+'px';
+		this.root.style.transition = this.moveTime+'ms '+this.transitionTiming;
+		this.root.style.left = '-'+firstChild.offsetWidth+'px';
 		
 		const that = this;
 		setTimeout( function() {
-			that.elem.style.transition = '0s';
-			that.elem.style.left = '0';
-			that.elem.removeChild(firstChild);
+			that.root.style.transition = '0s';
+			that.root.style.left = '0';
+			that.root.removeChild(firstChild);
 		}, this.moveTime);
 	}
 	public backward(): void {
 		this.curPos = this.pmod(this.curPos-1, this.numObjs);
 
 		// get last object and move to front
-		const lastChild = <HTMLElement>this.elem.lastElementChild;
+		const lastChild = <HTMLElement>this.root.lastElementChild;
 		const copy = <HTMLElement>lastChild.cloneNode(true);
-		this.elem.insertBefore(copy, this.elem.firstElementChild);
+		this.root.insertBefore(copy, this.root.firstElementChild);
 		
-		this.elem.style.transition = "0s";
-		this.elem.style.left = -1*copy.offsetWidth+"px";
+		this.root.style.transition = "0s";
+		this.root.style.left = "-"+copy.offsetWidth+"px";
 		
 		const that = this;
 		setTimeout( function() { // force queue in correct order
-			that.elem.style.transition = that.moveTime+'ms '+that.transitionTiming;
-			that.elem.style.left = "0";
+			that.root.style.transition = that.moveTime+'ms '+that.transitionTiming;
+			that.root.style.left = "0";
 		}, 0);
 		setTimeout( function() {
-			that.elem.removeChild(lastChild);
+			that.root.removeChild(lastChild);
 		}, this.moveTime );
 	}
-	public goto(loc, origDist?) {
-		//
+	
+	public goto(loc) {
+		let distToLeft: number = this.pmod(this.curPos-loc, this.numObjs);
+		let distToRight: number = this.pmod(loc-this.curPos, this.numObjs);
+		
+		if( !distToLeft || !distToRight ) return; // already at location
+		if( distToRight <= distToLeft ) { // move left/forward
+			this.curPos = loc;
+			
+			// copy n elements from beginning to end
+			const children = Array.from( <HTMLCollection>this.root.children ).slice(0, distToRight);
+			let sumWidth: number = 0;
+			let i; for( i in children ) {
+				const obj = <HTMLElement>children[i];
+				sumWidth += obj.offsetWidth;
+				const copy = obj.cloneNode(true);
+				this.root.appendChild(copy);
+			}
+			
+			// move
+			this.root.style.transition = this.moveTime+'ms '+this.transitionTiming;
+			this.root.style.left = '-'+sumWidth+'px';
+			
+			// remove n elements from beginning
+			const that = this;
+			setTimeout( function() {
+				that.root.style.transition = '0s';
+				that.root.style.left = '0';
+				let i; for(i in children) that.root.removeChild(children[i]);
+			}, this.moveTime);
+		}
+		else { // move right/backward
+			this.curPos = loc;
+			
+			const that = this;
+			// copy n elements from end to beginning
+			const children = Array.from( <HTMLCollection>this.root.children ).slice(-distToLeft);
+			let sumWidth: number = 0;
+			let i; for( i in children ) {
+				const obj = <HTMLElement>children[i];
+				sumWidth += obj.offsetWidth;
+				const copy = obj.cloneNode(true);
+				this.root.insertBefore(copy, that.root.firstChild);
+			}
+			
+			// move
+			this.root.style.transition = "0s";
+			this.root.style.left = "-"+sumWidth+'px';
+			
+			// remove n elements from end
+			// const `that` already declared
+			setTimeout( function() { // force queue in correct order
+				that.root.style.transition = that.moveTime+'ms '+that.transitionTiming;
+				that.root.style.left = '0';
+			}, 0);
+			setTimeout( function() {
+				let i; for(i in children) that.root.removeChild(children[i]);
+			}, this.moveTime );
+		}
 	}
 	
 	public start(): void {
