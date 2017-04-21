@@ -37,7 +37,8 @@ class skrolr {
         }
         this.root.parentElement.insertBefore(this.parent, this.root);
         this.parent.appendChild(this.root);
-        if (params.arrows !== false) {
+        this.autoWidth();
+        if (params.arrows === true) {
             const that = this;
             let leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
@@ -50,14 +51,14 @@ class skrolr {
             this.parent.addEventListener("mouseover", function () { that.toggleArrows(); });
             this.parent.addEventListener("mouseout", function () { that.toggleArrows(); });
         }
-        if (params.buttons !== false) {
+        if (params.buttons === true) {
             let buttons = document.createElement("div");
             buttons.className = "sk-button-cont sk-hidden";
             this.parent.appendChild(buttons);
             const that = this;
             this.parent.addEventListener("mouseover", function () { that.toggleButtons(); });
             this.parent.addEventListener("mouseout", function () { that.toggleButtons(); });
-            for (let i = 0, len = this.root.children.length; i < len; i++) {
+            for (let i = 0; i < this.numObjs; i++) {
                 let btn = document.createElement("div");
                 btn.className = "sk-button";
                 btn.onclick = function () { that.goto(i); };
@@ -75,11 +76,12 @@ class skrolr {
         this.parent.children[3].classList.toggle("sk-hidden");
     }
     autoWidth() {
-        for (let i = 0, len = this.numWide.length; i < len; i++) {
+        const that = this;
+        for (let i = 0, leni = this.numWide.length; i < leni; i++) {
             if (this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null)) {
                 const children = this.root.children;
-                for (let i = 0, len = children.length; i < len; i++) {
-                    children[i].style.width = 100 / this.numWide[i][2] + "%";
+                for (let j = 0, lenj = children.length; j < lenj; j++) {
+                    children[j].style.width = 100 / that.numWide[i][2] + "%";
                 }
                 break;
             }
@@ -134,9 +136,8 @@ class skrolr {
             const that = this;
             const children = Array.from(this.root.children).slice(-distToLeft);
             let sumWidth = 0;
-            let i;
             let len = children.length;
-            for (i in children) {
+            for (let i = 0; i < len; i++) {
                 const obj = children[len - i - 1];
                 sumWidth += obj.offsetWidth;
                 const copy = obj.cloneNode(true);
@@ -166,7 +167,8 @@ class skrolr {
     }
 }
 window.onresize = function () {
-    for (let i = 0, len = skrolrs.length; i < len; i++) {
+    let i;
+    for (i in skrolrs) {
         skrolrs[i].autoWidth();
     }
 };

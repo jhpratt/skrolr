@@ -1,8 +1,11 @@
 /* skrolr v0.4.0
- * MIT license
+ * GNU GPL v3
  * Jacob H. Pratt
  * jhprattdev@gmail.com
  */
+
+// TODO case when there are no children
+// TODO case when skrolr is in transition (do nothing?)
 
 let skrolrs: skrolr[] = [];
 class skrolr {
@@ -12,14 +15,14 @@ class skrolr {
 	private numObjs: number;
 	private curPos: number = 0;
 	private interval: number;
-	public numWide: number[][]; // array of options
+	public numWide: number[][]; // array of [min, max, size]
 	public moveTime: number;
 	public waitTime: number;
 	public transitionTiming: string;
 	
 	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
-	public constructor(root: HTMLElement|string, params) {
+	public constructor(root: HTMLElement|string, params: {[key:string]:any} ) {
 		skrolrs.push(this);
 		
 		switch(typeof root) {
@@ -61,9 +64,10 @@ class skrolr {
 		
 		this.root.parentElement.insertBefore(this.parent, this.root);
 		this.parent.appendChild(this.root);
+		this.autoWidth() // set width of all children
 		// end create parent
 		
-		if( params.arrows !== false ) { // create arrows, hidden
+		if( params.arrows === true ) { // create arrows, hidden
 			const that = this;
 			
 			let leftArrow: HTMLElement = document.createElement("div");
@@ -81,7 +85,7 @@ class skrolr {
 			this.parent.addEventListener("mouseout", function() { that.toggleArrows(); });
 		}
 		
-		if( params.buttons !== false ) { // create buttons, hidden
+		if( params.buttons === true ) { // create buttons, hidden
 			let buttons: HTMLElement = document.createElement("div");
 			buttons.className = "sk-button-cont sk-hidden";
 			this.parent.appendChild(buttons);
@@ -92,7 +96,7 @@ class skrolr {
 			this.parent.addEventListener("mouseout", function() { that.toggleButtons(); });
 			
 			// create individual buttons
-			for(let i=0, len=this.root.children.length; i<len; i++) {
+			for(let i=0; i<this.numObjs; i++) {
 				let btn = document.createElement("div"); // buttons (inside container)
 				btn.className = "sk-button";
 				btn.onclick = function() { that.goto(i); };
@@ -111,11 +115,15 @@ class skrolr {
 		this.parent.children[3].classList.toggle("sk-hidden");
 	}
 	public autoWidth(): void { // set all children to correct size (in pct)
-		for( let i=0, len=this.numWide.length; i<len; i++ ) {
+		// TODO switch `numWide` to [min, max] instead of [min, max, size], with size being index+1
+		const that = this;
+		for( let i=0, leni=this.numWide.length; i<leni; i++ ) {
 			if( this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null) ) { // match
 				const children = this.root.children;
-				for( let i=0, len=children.length; i<len; i++ ) { // set all children
-					(<HTMLElement>children[i]).style.width = 100/this.numWide[i][2]+"%";
+				
+				// using children.length instead of numObjs because of duplication
+				for( let j=0, lenj=children.length; j<lenj; j++ ) { // set all children
+					(<HTMLElement>children[j]).style.width = 100 / that.numWide[i][2] + "%";
 				}
 				break;
 			}
@@ -124,6 +132,7 @@ class skrolr {
 	private childrenWidth(): number { // get total width of all children of an object
 		const children = this.root.children;
 		let totalWidth: number = 0;
+		
 		for( let i=0, len=children.length; i<len; i++ ) {
 			totalWidth += (<HTMLElement>children[i]).offsetWidth;
 		}
@@ -139,7 +148,7 @@ class skrolr {
 		this.goto( this.curPos-1, true );
 	}
 	
-	public goto(loc: number, noStop?: boolean) {
+	public goto(loc: number, noStop?: boolean): void {
 		// stop if running
 		if( !noStop ) clearInterval( this.interval );
 		
@@ -179,11 +188,11 @@ class skrolr {
 			
 			const that = this;
 			// copy n elements from end to beginning
-			const children = Array.from( <HTMLCollection>this.root.children ).slice(-distToLeft);
+			const children = Array.from( <HTMLCollection>this.root.children ).slice(-distToLeft); // TODO custom polyfill for Array.from(), allowing backwards-compatibility to ES3 (currently ES6)
 			let sumWidth: number = 0;
-			let i;
 			let len = children.length; // to go in reverse order
-			for( i in children ) {
+			
+			for( let i=0; i<len; i++ ) {
 				const obj = <HTMLElement>children[len-i-1]; // -1 because len is 1-index, not 0-index
 				sumWidth += obj.offsetWidth;
 				const copy = obj.cloneNode(true);
@@ -195,7 +204,7 @@ class skrolr {
 			this.root.style.left = "-"+sumWidth+'px';
 			
 			// remove n elements from end
-			// const `that` already declared
+			// const that already declared
 			setTimeout( function() { // force queue in correct order
 				that.root.style.transition = that.moveTime+'ms '+that.transitionTiming;
 				that.root.style.left = '0';
@@ -219,7 +228,7 @@ class skrolr {
 
 // resize all child elements on window resize
 window.onresize = function() {
-	for( let i=0, len=skrolrs.length; i<len; i++ ) {
+	let i; for( i in skrolrs ) {
 		skrolrs[i].autoWidth();
 	}
 };
