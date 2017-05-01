@@ -21,6 +21,7 @@ class skrolr {
         this.moveTime = params.moveTime || 500;
         this.waitTime = params.waitTime || 3000;
         this.transitionTiming = params.transitionTiming || "ease-in-out";
+        this.scrollBy = params.scrollBy || 1;
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
@@ -96,10 +97,10 @@ class skrolr {
         return totalWidth;
     }
     forward() {
-        this.goto(this.curPos + 1, true);
+        this.goto(this.curPos + this.scrollBy, true);
     }
     backward() {
-        this.goto(this.curPos - 1, true);
+        this.goto(this.curPos - this.scrollBy, true);
     }
     goto(loc, noStop) {
         if (!noStop)

@@ -19,6 +19,7 @@ class skrolr {
 	public moveTime: number;
 	public waitTime: number;
 	public transitionTiming: string;
+	public scrollBy: number;
 	
 	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
@@ -38,11 +39,15 @@ class skrolr {
 		}
 		this.root.className = "sk";
 		
+		// mandatory parameters
 		this.numWide = params.numWide;
+
+		// optional parameters
 		this.numObjs = this.root.children.length; // for determining if left/right is faster
 		this.moveTime = params.moveTime || 500;
 		this.waitTime = params.waitTime || 3000;
 		this.transitionTiming = params.transitionTiming || "ease-in-out";
+		this.scrollBy = params.scrollBy || 1;
 		
 		// create parent element
 		this.parent = document.createElement("div");
@@ -142,10 +147,10 @@ class skrolr {
 	// TODO implement childrenWidth() to duplicate elements if width is too small
 	
 	public forward(): void {
-		this.goto( this.curPos+1, true );
+		this.goto( this.curPos + this.scrollBy, true );
 	}
 	public backward(): void {
-		this.goto( this.curPos-1, true );
+		this.goto( this.curPos - this.scrollBy, true );
 	}
 	
 	public goto(loc: number, noStop?: boolean): void {
