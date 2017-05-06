@@ -3,6 +3,7 @@ let skrolrs = [];
 class skrolr {
     constructor(root, params) {
         this.curPos = 0;
+        this.wasRunning = false;
         skrolrs.push(this);
         switch (typeof root) {
             case "object":
@@ -66,6 +67,7 @@ class skrolr {
                 buttons.appendChild(btn);
             }
         }
+        this.wasRunning = true;
         this.start();
     }
     pmod(x, n) { return ((x % n) + n) % n; }
@@ -79,7 +81,7 @@ class skrolr {
     autoWidth() {
         const that = this;
         for (let i = 0, leni = this.numWide.length; i < leni; i++) {
-            if (this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null)) {
+            if (this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || this.numWide[i][1] === undefined || this.numWide[i][1] === null)) {
                 const children = this.root.children;
                 for (let j = 0, lenj = children.length; j < lenj; j++) {
                     children[j].style.width = 100 / that.numWide[i][2] + "%";
@@ -163,7 +165,9 @@ class skrolr {
             that.forward();
         }, this.moveTime + this.waitTime);
     }
-    stop() {
+    stop(noSet) {
+        if (!noSet)
+            this.wasRunning = false;
         clearInterval(this.interval);
     }
 }
@@ -173,3 +177,16 @@ window.onresize = function () {
         skrolrs[i].autoWidth();
     }
 };
+window.addEventListener("focus", function () {
+    let i;
+    for (i in skrolrs) {
+        if (skrolrs[i].wasRunning)
+            skrolrs[i].start();
+    }
+});
+window.addEventListener("blur", function () {
+    let i;
+    for (i in skrolrs) {
+        skrolrs[i].stop(true);
+    }
+});

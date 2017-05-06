@@ -20,6 +20,7 @@ class skrolr {
 	public waitTime: number;
 	public transitionTiming: string;
 	public scrollBy: number;
+	public wasRunning: boolean = false; // if was running before blur / out of viewport
 	
 	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
@@ -109,6 +110,7 @@ class skrolr {
 			}
 		}
 		
+		this.wasRunning = true;
 		this.start();
 	}
 	
@@ -120,13 +122,12 @@ class skrolr {
 		this.parent.children[3].classList.toggle("sk-hidden");
 	}
 	public autoWidth(): void { // set all children to correct size (in pct)
-		// TODO switch `numWide` to [min, max] instead of [min, max, size], with size being index+1
 		const that = this;
 		for( let i=0, leni=this.numWide.length; i<leni; i++ ) {
-			if( this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || typeof this.numWide[i][1] === "undefined" || this.numWide[i][1] === null) ) { // match
+			if( this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || this.numWide[i][1] === undefined || this.numWide[i][1] === null) ) { // match
 				const children = this.root.children;
 				
-				// using children.length instead of numObjs because of duplication
+				// using children.length instead of numObjs because of possible duplication
 				for( let j=0, lenj=children.length; j<lenj; j++ ) { // set all children
 					(<HTMLElement>children[j]).style.width = 100 / that.numWide[i][2] + "%";
 				}
@@ -226,7 +227,8 @@ class skrolr {
 			that.forward();
 		}, this.moveTime + this.waitTime );
 	}
-	public stop(): void {
+	public stop( noSet: boolean ): void {
+		if( !noSet ) this.wasRunning = false; // only set wasRunning if noSet is excluded
 		clearInterval( this.interval );
 	}
 }
@@ -237,3 +239,16 @@ window.onresize = function() {
 		skrolrs[i].autoWidth();
 	}
 };
+
+window.addEventListener( "focus", function() {
+	let i; for( i in skrolrs ) {
+		if( skrolrs[i].wasRunning )
+			skrolrs[i].start();
+	}
+});
+
+window.addEventListener( "blur", function() {
+	let i; for( i in skrolrs ) {
+		skrolrs[i].stop(true); // true prevents wasRunning from being set
+	}
+} );
