@@ -88,12 +88,12 @@ class skrolr {
 			
 			let leftArrow: HTMLElement = document.createElement("div");
 			leftArrow.className = "sk-arrow sk-left sk-hidden";
-			leftArrow.onclick = function() { that.stop(); that.backward(); }
+			leftArrow.onclick = function() { that.stop().backward(); }
 			this.parent.appendChild(leftArrow);
 			
 			let rightArrow: HTMLElement = document.createElement("div");
 			rightArrow.className = "sk-arrow sk-right sk-hidden";
-			rightArrow.onclick = function() { that.stop(); that.forward(); }
+			rightArrow.onclick = function() { that.stop().forward(); }
 			this.parent.appendChild(rightArrow);
 			
 			// show/hide on mouseover/out
@@ -115,7 +115,7 @@ class skrolr {
 			for(let i=0; i<this.numObjs; i++) {
 				let btn = document.createElement("div"); // buttons (inside container)
 				btn.className = "sk-button";
-				btn.onclick = function() { that.stop(); that.goto(i); };
+				btn.onclick = function() { that.stop().goto(i); };
 				buttons.appendChild(btn);
 			}
 		}
@@ -125,14 +125,16 @@ class skrolr {
 		}
 	}
 	
-	public toggleArrows(): void {
+	public toggleArrows(): skrolr {
 		this.parent.children[1].classList.toggle("sk-hidden");
 		this.parent.children[2].classList.toggle("sk-hidden");
+		return this;
 	}
-	public toggleButtons(): void {
+	public toggleButtons(): skrolr {
 		this.parent.children[3].classList.toggle("sk-hidden");
+		return this;
 	}
-	public autoWidth(): void { // set all children to correct size (in pct)
+	public autoWidth(): skrolr { // set all children to correct size (in pct)
 		const that = this;
 		for( let i=0, leni=this.numWide.length; i<leni; i++ ) {
 			if( this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || this.numWide[i][1] === undefined || this.numWide[i][1] === null) ) { // match
@@ -145,6 +147,7 @@ class skrolr {
 				break;
 			}
 		}
+		return this;
 	}
 	private childrenWidth(): number { // get total width of all children of an object
 		const children = this.root.children;
@@ -158,14 +161,14 @@ class skrolr {
 	
 	// TODO implement childrenWidth() to duplicate elements if width is too small
 	
-	public forward(): void {
-		this.goto( this.curPos + this.scrollBy, true );
+	public forward(): skrolr {
+		return this.goto( this.curPos + this.scrollBy, true );
 	}
-	public backward(): void {
-		this.goto( this.curPos - this.scrollBy, true );
+	public backward(): skrolr {
+		return this.goto( this.curPos - this.scrollBy, true );
 	}
 	
-	public goto(loc: number, noStop?: boolean): void {
+	public goto(loc: number, noStop?: boolean): skrolr {
 		// stop if running
 		if( !noStop ) clearInterval( this.interval );
 		
@@ -230,9 +233,10 @@ class skrolr {
 				let i; for(i in children) that.root.removeChild(children[i]);
 			}, this.moveTime );
 		}
+		return this;
 	}
 	
-	public start(): void {
+	public start(): skrolr {
 		this.wasRunning = true;
 		this.isRunning = true;
 		
@@ -241,11 +245,13 @@ class skrolr {
 		this.interval = setInterval( function() {
 			that.forward();
 		}, this.moveTime + this.waitTime );
+		return this;
 	}
-	public stop( noSet?: boolean ): void {
+	public stop( noSet?: boolean ): skrolr {
 		if( !noSet ) this.wasRunning = false; // only set wasRunning if noSet is excluded
 		this.isRunning = false;
 		clearInterval( this.interval );
+		return this;
 	}
 	
 	public isVisible(): boolean {
@@ -269,7 +275,7 @@ window.onresize = function() {
 
 // resume running on window focus
 window.addEventListener( "focus", function() {
-	skrolr.each( function(obj:skrolr) {
+	skrolr.each( function( obj:skrolr ) {
 		if( obj.wasRunning )
 			obj.start();
 	});

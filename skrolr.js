@@ -44,11 +44,11 @@ class skrolr {
             const that = this;
             let leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
-            leftArrow.onclick = function () { that.stop(); that.backward(); };
+            leftArrow.onclick = function () { that.stop().backward(); };
             this.parent.appendChild(leftArrow);
             let rightArrow = document.createElement("div");
             rightArrow.className = "sk-arrow sk-right sk-hidden";
-            rightArrow.onclick = function () { that.stop(); that.forward(); };
+            rightArrow.onclick = function () { that.stop().forward(); };
             this.parent.appendChild(rightArrow);
             this.parent.addEventListener("mouseover", function () { that.toggleArrows(); });
             this.parent.addEventListener("mouseout", function () { that.toggleArrows(); });
@@ -63,7 +63,7 @@ class skrolr {
             for (let i = 0; i < this.numObjs; i++) {
                 let btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = function () { that.stop(); that.goto(i); };
+                btn.onclick = function () { that.stop().goto(i); };
                 buttons.appendChild(btn);
             }
         }
@@ -78,9 +78,11 @@ class skrolr {
     toggleArrows() {
         this.parent.children[1].classList.toggle("sk-hidden");
         this.parent.children[2].classList.toggle("sk-hidden");
+        return this;
     }
     toggleButtons() {
         this.parent.children[3].classList.toggle("sk-hidden");
+        return this;
     }
     autoWidth() {
         const that = this;
@@ -93,6 +95,7 @@ class skrolr {
                 break;
             }
         }
+        return this;
     }
     childrenWidth() {
         const children = this.root.children;
@@ -103,10 +106,10 @@ class skrolr {
         return totalWidth;
     }
     forward() {
-        this.goto(this.curPos + this.scrollBy, true);
+        return this.goto(this.curPos + this.scrollBy, true);
     }
     backward() {
-        this.goto(this.curPos - this.scrollBy, true);
+        return this.goto(this.curPos - this.scrollBy, true);
     }
     goto(loc, noStop) {
         if (!noStop)
@@ -162,6 +165,7 @@ class skrolr {
                     that.root.removeChild(children[i]);
             }, this.moveTime);
         }
+        return this;
     }
     start() {
         this.wasRunning = true;
@@ -171,12 +175,14 @@ class skrolr {
         this.interval = setInterval(function () {
             that.forward();
         }, this.moveTime + this.waitTime);
+        return this;
     }
     stop(noSet) {
         if (!noSet)
             this.wasRunning = false;
         this.isRunning = false;
         clearInterval(this.interval);
+        return this;
     }
     isVisible() {
         const bounding = this.parent.getBoundingClientRect();
