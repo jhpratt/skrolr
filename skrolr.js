@@ -3,6 +3,7 @@ class skrolr {
     constructor(root, params) {
         this.curPos = 0;
         this.wasRunning = false;
+        this.isRunning = false;
         skrolr.all.push(this);
         switch (typeof root) {
             case "object":
@@ -66,8 +67,9 @@ class skrolr {
                 buttons.appendChild(btn);
             }
         }
-        this.wasRunning = true;
-        this.start();
+        if (document.hasFocus()) {
+            this.start();
+        }
     }
     static each(fn) {
         skrolr.all.forEach((obj) => { fn(obj); });
@@ -162,7 +164,10 @@ class skrolr {
         }
     }
     start() {
+        this.wasRunning = true;
+        this.isRunning = true;
         const that = this;
+        clearInterval(this.interval);
         this.interval = setInterval(function () {
             that.forward();
         }, this.moveTime + this.waitTime);
@@ -170,7 +175,16 @@ class skrolr {
     stop(noSet) {
         if (!noSet)
             this.wasRunning = false;
+        this.isRunning = false;
         clearInterval(this.interval);
+    }
+    isVisible() {
+        const bounding = this.parent.getBoundingClientRect();
+        const html = document.documentElement;
+        return (bounding.bottom >= 0 &&
+            bounding.top <= (window.innerHeight || html.clientHeight) &&
+            bounding.right >= 0 &&
+            bounding.left <= (window.innerWidth || html.clientWidth));
     }
 }
 skrolr.all = [];
@@ -188,5 +202,14 @@ window.addEventListener("focus", function () {
 window.addEventListener("blur", function () {
     skrolr.each(function (obj) {
         obj.stop(true);
+    });
+});
+window.addEventListener("scroll", function () {
+    skrolr.each(function (obj) {
+        const visible = obj.isVisible();
+        if (!obj.isRunning && obj.wasRunning && visible)
+            obj.start();
+        else if (obj.isRunning && !visible)
+            obj.stop(true);
     });
 });

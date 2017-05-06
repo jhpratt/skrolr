@@ -28,6 +28,7 @@ class skrolr {
 	public transitionTiming: string;
 	public scrollBy: number;
 	public wasRunning: boolean = false; // if was running before blur / out of viewport
+	public isRunning: boolean = false; // is currently running
 	
 	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
@@ -119,8 +120,9 @@ class skrolr {
 			}
 		}
 		
-		this.wasRunning = true;
-		this.start();
+		if( document.hasFocus() ) {
+			this.start();
+		}
 	}
 	
 	public toggleArrows(): void {
@@ -231,14 +233,30 @@ class skrolr {
 	}
 	
 	public start(): void {
+		this.wasRunning = true;
+		this.isRunning = true;
+		
 		const that = this;
+		clearInterval( this.interval ); // don't allow multiple intervals
 		this.interval = setInterval( function() {
 			that.forward();
 		}, this.moveTime + this.waitTime );
 	}
-	public stop( noSet: boolean ): void {
+	public stop( noSet?: boolean ): void {
 		if( !noSet ) this.wasRunning = false; // only set wasRunning if noSet is excluded
+		this.isRunning = false;
 		clearInterval( this.interval );
+	}
+	
+	public isVisible(): boolean {
+		const bounding = this.parent.getBoundingClientRect();
+		const html = document.documentElement;
+		return (
+			bounding.bottom >= 0 && // not above viewport
+			bounding.top <= (window.innerHeight || html.clientHeight) && // not below viewport
+			bounding.right >= 0 && // not left of viewport
+			bounding.left <= (window.innerWidth || html.clientWidth) // not right of viewport
+		);
 	}
 }
 
@@ -261,5 +279,14 @@ window.addEventListener( "focus", function() {
 window.addEventListener( "blur", function() {
 	skrolr.each( function( obj:skrolr ) {
 		obj.stop(true); // true prevents wasRunning from being set
+	});
+});
+
+// start/stop if in viewport/not
+window.addEventListener( "scroll", function() {
+	skrolr.each( function( obj:skrolr ) {
+		const visible = obj.isVisible()
+		if( !obj.isRunning && obj.wasRunning && visible ) obj.start();
+		else if( obj.isRunning && !visible ) obj.stop(true);
 	});
 });
