@@ -1,10 +1,9 @@
 "use strict";
-let skrolrs = [];
 class skrolr {
     constructor(root, params) {
         this.curPos = 0;
         this.wasRunning = false;
-        skrolrs.push(this);
+        skrolr.all.push(this);
         switch (typeof root) {
             case "object":
                 this.root = root;
@@ -18,11 +17,11 @@ class skrolr {
         }
         this.root.className = "sk";
         this.numWide = params.numWide;
-        this.numObjs = this.root.children.length;
         this.moveTime = params.moveTime || 500;
         this.waitTime = params.waitTime || 3000;
         this.transitionTiming = params.transitionTiming || "ease-in-out";
         this.scrollBy = params.scrollBy || 1;
+        this.numObjs = this.root.children.length;
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
@@ -69,6 +68,9 @@ class skrolr {
         }
         this.wasRunning = true;
         this.start();
+    }
+    static each(fn) {
+        skrolr.all.forEach((obj) => { fn(obj); });
     }
     pmod(x, n) { return ((x % n) + n) % n; }
     toggleArrows() {
@@ -171,22 +173,20 @@ class skrolr {
         clearInterval(this.interval);
     }
 }
+skrolr.all = [];
 window.onresize = function () {
-    let i;
-    for (i in skrolrs) {
-        skrolrs[i].autoWidth();
-    }
+    skrolr.each(function (obj) {
+        obj.autoWidth();
+    });
 };
 window.addEventListener("focus", function () {
-    let i;
-    for (i in skrolrs) {
-        if (skrolrs[i].wasRunning)
-            skrolrs[i].start();
-    }
+    skrolr.each(function (obj) {
+        if (obj.wasRunning)
+            obj.start();
+    });
 });
 window.addEventListener("blur", function () {
-    let i;
-    for (i in skrolrs) {
-        skrolrs[i].stop(true);
-    }
+    skrolr.each(function (obj) {
+        obj.stop(true);
+    });
 });

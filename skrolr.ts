@@ -7,11 +7,18 @@
 // TODO case when there are no children
 // TODO case when skrolr is in transition (do nothing?)
 
-let skrolrs: skrolr[] = [];
 class skrolr {
+	// all skrolrs, for iterating through
+	private static all: skrolr[] = [];
+	
+	// run specified function on all skrolr objects
+	public static each( fn: any ): void {
+		skrolr.all.forEach( (obj: skrolr) => { fn(obj); });
+	}
+	
 	// initialize variables for later
-	private parent: HTMLElement;
-	private root: HTMLElement;
+	private readonly parent: HTMLElement;
+	private readonly root: HTMLElement;
 	private numObjs: number;
 	private curPos: number = 0;
 	private interval: number;
@@ -25,7 +32,7 @@ class skrolr {
 	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
 	public constructor(root: HTMLElement|string, params: {[key:string]:any} ) {
-		skrolrs.push(this);
+		skrolr.all.push(this);
 		
 		switch(typeof root) {
 			case "object":
@@ -44,11 +51,13 @@ class skrolr {
 		this.numWide = params.numWide;
 
 		// optional parameters
-		this.numObjs = this.root.children.length; // for determining if left/right is faster
 		this.moveTime = params.moveTime || 500;
 		this.waitTime = params.waitTime || 3000;
 		this.transitionTiming = params.transitionTiming || "ease-in-out";
 		this.scrollBy = params.scrollBy || 1;
+		
+		// auto-generated variables
+		this.numObjs = this.root.children.length; // for determining if left/right is faster
 		
 		// create parent element
 		this.parent = document.createElement("div");
@@ -235,20 +244,22 @@ class skrolr {
 
 // resize all child elements on window resize
 window.onresize = function() {
-	let i; for( i in skrolrs ) {
-		skrolrs[i].autoWidth();
-	}
+	skrolr.each( function( obj:skrolr ) {
+		obj.autoWidth();
+	});
 };
 
+// resume running on window focus
 window.addEventListener( "focus", function() {
-	let i; for( i in skrolrs ) {
-		if( skrolrs[i].wasRunning )
-			skrolrs[i].start();
-	}
+	skrolr.each( function(obj:skrolr) {
+		if( obj.wasRunning )
+			obj.start();
+	});
 });
 
+// stop running on window blur
 window.addEventListener( "blur", function() {
-	let i; for( i in skrolrs ) {
-		skrolrs[i].stop(true); // true prevents wasRunning from being set
-	}
-} );
+	skrolr.each( function( obj:skrolr ) {
+		obj.stop(true); // true prevents wasRunning from being set
+	});
+});
