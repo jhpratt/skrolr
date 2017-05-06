@@ -88,12 +88,12 @@ class skrolr {
 			
 			let leftArrow: HTMLElement = document.createElement("div");
 			leftArrow.className = "sk-arrow sk-left sk-hidden";
-			leftArrow.onclick = function() { that.backward(); }
+			leftArrow.onclick = function() { that.stop(); that.backward(); }
 			this.parent.appendChild(leftArrow);
 			
 			let rightArrow: HTMLElement = document.createElement("div");
 			rightArrow.className = "sk-arrow sk-right sk-hidden";
-			rightArrow.onclick = function() { that.forward(); }
+			rightArrow.onclick = function() { that.stop(); that.forward(); }
 			this.parent.appendChild(rightArrow);
 			
 			// show/hide on mouseover/out
@@ -115,7 +115,7 @@ class skrolr {
 			for(let i=0; i<this.numObjs; i++) {
 				let btn = document.createElement("div"); // buttons (inside container)
 				btn.className = "sk-button";
-				btn.onclick = function() { that.goto(i); };
+				btn.onclick = function() { that.stop(); that.goto(i); };
 				buttons.appendChild(btn);
 			}
 		}

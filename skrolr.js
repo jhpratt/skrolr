@@ -44,11 +44,11 @@ class skrolr {
             const that = this;
             let leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
-            leftArrow.onclick = function () { that.backward(); };
+            leftArrow.onclick = function () { that.stop(); that.backward(); };
             this.parent.appendChild(leftArrow);
             let rightArrow = document.createElement("div");
             rightArrow.className = "sk-arrow sk-right sk-hidden";
-            rightArrow.onclick = function () { that.forward(); };
+            rightArrow.onclick = function () { that.stop(); that.forward(); };
             this.parent.appendChild(rightArrow);
             this.parent.addEventListener("mouseover", function () { that.toggleArrows(); });
             this.parent.addEventListener("mouseout", function () { that.toggleArrows(); });
@@ -63,7 +63,7 @@ class skrolr {
             for (let i = 0; i < this.numObjs; i++) {
                 let btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = function () { that.goto(i); };
+                btn.onclick = function () { that.stop(); that.goto(i); };
                 buttons.appendChild(btn);
             }
         }
