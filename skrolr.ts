@@ -16,6 +16,17 @@ class skrolr {
 		skrolr.all.forEach( (obj: skrolr) => { fn(obj); });
 	}
 	
+	// convert HTMLCollection to Array (ES3 polyfill for Array.from)
+	private static _Array = class extends Array {
+		from( obj: HTMLCollection ) {
+			let arr = [];
+			for( let i=0, len=obj.length; i<len; i++ ) {
+				arr[i] = obj[i];
+			}
+			return arr;
+		}
+	}
+	
 	// initialize variables for later
 	private readonly parent: HTMLElement;
 	private readonly root: HTMLElement;
@@ -115,14 +126,12 @@ class skrolr {
 			for(let i=0; i<this.numObjs; i++) {
 				let btn = document.createElement("div"); // buttons (inside container)
 				btn.className = "sk-button";
-				btn.onclick = function() { that.stop().goto(i); };
+				btn.onclick = function() { that.goto(i); };
 				buttons.appendChild(btn);
 			}
 		}
 		
-		if( document.hasFocus() ) {
-			this.start();
-		}
+		if( document.hasFocus() ) this.start();
 	}
 	
 	public toggleArrows(): skrolr {
@@ -170,7 +179,7 @@ class skrolr {
 	
 	public goto(loc: number, noStop?: boolean): skrolr {
 		// stop if running
-		if( !noStop ) clearInterval( this.interval );
+		if( noStop !== true ) clearInterval( this.interval );
 		
 		loc = this.pmod(loc, this.numObjs);
 		
@@ -208,7 +217,7 @@ class skrolr {
 			
 			const that = this;
 			// copy n elements from end to beginning
-			const children = Array.from( <HTMLCollection>this.root.children ).slice(-distToLeft); // TODO custom polyfill for Array.from(), allowing backwards-compatibility to ES3 (currently ES6)
+			const children = skrolr._Array.from( this.root.children ).slice(-distToLeft);
 			let sumWidth: number = 0;
 			let len = children.length; // to go in reverse order
 			

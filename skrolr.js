@@ -63,13 +63,12 @@ class skrolr {
             for (let i = 0; i < this.numObjs; i++) {
                 let btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = function () { that.stop().goto(i); };
+                btn.onclick = function () { that.goto(i); };
                 buttons.appendChild(btn);
             }
         }
-        if (document.hasFocus()) {
+        if (document.hasFocus())
             this.start();
-        }
     }
     static each(fn) {
         skrolr.all.forEach((obj) => { fn(obj); });
@@ -112,7 +111,7 @@ class skrolr {
         return this.goto(this.curPos - this.scrollBy, true);
     }
     goto(loc, noStop) {
-        if (!noStop)
+        if (noStop !== true)
             clearInterval(this.interval);
         loc = this.pmod(loc, this.numObjs);
         let distToLeft = this.pmod(this.curPos - loc, this.numObjs);
@@ -144,7 +143,7 @@ class skrolr {
         else {
             this.curPos = loc;
             const that = this;
-            const children = Array.from(this.root.children).slice(-distToLeft);
+            const children = skrolr._Array.from(this.root.children).slice(-distToLeft);
             let sumWidth = 0;
             let len = children.length;
             for (let i = 0; i < len; i++) {
@@ -194,6 +193,15 @@ class skrolr {
     }
 }
 skrolr.all = [];
+skrolr._Array = class extends Array {
+    from(obj) {
+        let arr = [];
+        for (let i = 0, len = obj.length; i < len; i++) {
+            arr[i] = obj[i];
+        }
+        return arr;
+    }
+};
 window.onresize = function () {
     skrolr.each(function (obj) {
         obj.autoWidth();
