@@ -18,7 +18,7 @@ class skrolr {
 	
 	// convert HTMLCollection to Array (ES3 polyfill for Array.from)
 	private static _Array = class extends Array {
-		from( obj: HTMLCollection ) {
+		public static from( obj: any ) {
 			let arr = [];
 			for( let i=0, len=obj.length; i<len; i++ ) {
 				arr[i] = obj[i];
@@ -41,7 +41,7 @@ class skrolr {
 	public wasRunning: boolean = false; // if was running before blur / out of viewport
 	public isRunning: boolean = false; // is currently running
 	
-	private pmod(x:number, n:number): number { return ((x%n)+n)%n; }
+	private static pmod(x:number, n:number): number { return ((x%n)+n)%n; }
 	
 	public constructor(root: HTMLElement|string, params: {[key:string]:any} ) {
 		skrolr.all.push(this);
@@ -181,17 +181,17 @@ class skrolr {
 		// stop if running
 		if( noStop !== true ) clearInterval( this.interval );
 		
-		loc = this.pmod(loc, this.numObjs);
+		loc = skrolr.pmod(loc, this.numObjs);
 		
-		let distToLeft: number = this.pmod(this.curPos-loc, this.numObjs);
-		let distToRight: number = this.pmod(loc-this.curPos, this.numObjs);
+		let distToLeft: number = skrolr.pmod(this.curPos-loc, this.numObjs);
+		let distToRight: number = skrolr.pmod(loc-this.curPos, this.numObjs);
 		
 		if( !distToLeft || !distToRight ) return; // already at location
 		if( distToRight <= distToLeft ) { // move left/forward
 			this.curPos = loc;
 			
 			// copy n elements from beginning to end
-			const children = Array.from( <HTMLCollection>this.root.children ).slice(0, distToRight);
+			const children = skrolr._Array.from( <HTMLCollection>this.root.children ).slice(0, distToRight);
 			let sumWidth: number = 0;
 			let i; for( i in children ) {
 				const obj = <HTMLElement>children[i];

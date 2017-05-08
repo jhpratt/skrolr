@@ -73,7 +73,7 @@ class skrolr {
     static each(fn) {
         skrolr.all.forEach((obj) => { fn(obj); });
     }
-    pmod(x, n) { return ((x % n) + n) % n; }
+    static pmod(x, n) { return ((x % n) + n) % n; }
     toggleArrows() {
         this.parent.children[1].classList.toggle("sk-hidden");
         this.parent.children[2].classList.toggle("sk-hidden");
@@ -113,14 +113,14 @@ class skrolr {
     goto(loc, noStop) {
         if (noStop !== true)
             clearInterval(this.interval);
-        loc = this.pmod(loc, this.numObjs);
-        let distToLeft = this.pmod(this.curPos - loc, this.numObjs);
-        let distToRight = this.pmod(loc - this.curPos, this.numObjs);
+        loc = skrolr.pmod(loc, this.numObjs);
+        let distToLeft = skrolr.pmod(this.curPos - loc, this.numObjs);
+        let distToRight = skrolr.pmod(loc - this.curPos, this.numObjs);
         if (!distToLeft || !distToRight)
             return;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
-            const children = Array.from(this.root.children).slice(0, distToRight);
+            const children = skrolr._Array.from(this.root.children).slice(0, distToRight);
             let sumWidth = 0;
             let i;
             for (i in children) {
@@ -194,7 +194,7 @@ class skrolr {
 }
 skrolr.all = [];
 skrolr._Array = class extends Array {
-    from(obj) {
+    static from(obj) {
         let arr = [];
         for (let i = 0, len = obj.length; i < len; i++) {
             arr[i] = obj[i];
