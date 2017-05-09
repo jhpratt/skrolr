@@ -1,5 +1,7 @@
-<script src="skrolr.js"></script>
+<script src="min/skrolr.es6.min.js"></script>
 <link rel="stylesheet" href="skrolr.css">
+
+<script src="jquery-3.2.1.min.js"></script>
 
 <style>
 /* classes are for stylistic purposes only; they are not required */
@@ -23,11 +25,9 @@ li { width: calc(100% / 6); }
 
 <script>
 // initialize scroller
-obj = document.getElementById("slide-container");
-obj.skrolr ({
+obj = new skrolr("slide-container", {
 	waitTime: 2000,
 	moveTime: 750,
-	arrows: true,
 	numWide: [
 		[0,500,1], // width of parent is 0-499px, show 1 <li> element
 		[500,750,2],
@@ -37,6 +37,8 @@ obj.skrolr ({
 		[1500,1750,6],
 		[1750,,7] // width of parent is at least (no maximum) 1750px, show 7 <li> elements
 	],
-	size: "100% 400px" // width then height
+	size: "100% 400px", // width then height
+	arrows: true,
+	buttons: true
 });
 </script>
