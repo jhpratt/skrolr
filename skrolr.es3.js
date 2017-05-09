@@ -84,7 +84,10 @@ var skrolr = (function () {
             this.start();
     }
     skrolr.each = function (fn) {
-        skrolr.all.forEach(function (obj) { fn(obj); });
+        for (var _i = 0, _a = skrolr.all; _i < _a.length; _i++) {
+            var obj = _a[_i];
+            fn(obj);
+        }
     };
     skrolr.pmod = function (x, n) { return ((x % n) + n) % n; };
     skrolr.prototype.toggleArrows = function () {
@@ -99,11 +102,13 @@ var skrolr = (function () {
     skrolr.prototype.autoWidth = function () {
         var that = this;
         for (var i = 0, leni = this.numWide.length; i < leni; i++) {
-            if (this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || this.numWide[i][1] === undefined || this.numWide[i][1] === null)) {
+            if (this.numWide[i][0] <= this.root.offsetWidth
+                && (this.root.offsetWidth < this.numWide[i][1]
+                    || this.numWide[i][1] === undefined
+                    || this.numWide[i][1] === null)) {
                 var children = this.root.children;
-                for (var j = 0, lenj = children.length; j < lenj; j++) {
+                for (var j = 0, lenj = children.length; j < lenj; j++)
                     children[j].style.width = 100 / that.numWide[i][2] + "%";
-                }
                 break;
             }
         }
@@ -112,9 +117,8 @@ var skrolr = (function () {
     skrolr.prototype.childrenWidth = function () {
         var children = this.root.children;
         var totalWidth = 0;
-        for (var i = 0, len = children.length; i < len; i++) {
+        for (var i = 0, len = children.length; i < len; i++)
             totalWidth += children[i].offsetWidth;
-        }
         return totalWidth;
     };
     skrolr.prototype.forward = function () {
@@ -135,46 +139,48 @@ var skrolr = (function () {
             this.curPos = loc;
             var children_1 = skrolr._Array.from(this.root.children).slice(0, distToRight);
             var sumWidth = 0;
-            var i = void 0;
-            for (i in children_1) {
-                var obj = children_1[i];
+            for (var _i = 0, children_2 = children_1; _i < children_2.length; _i++) {
+                var child = children_2[_i];
+                var obj = child;
                 sumWidth += obj.offsetWidth;
                 var copy = obj.cloneNode(true);
                 this.root.appendChild(copy);
             }
             this.root.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
-            this.root.style.left = '-' + sumWidth + 'px';
+            this.root.style.left = -1 * sumWidth + 'px';
             var that_3 = this;
             setTimeout(function () {
                 that_3.root.style.transition = '0s';
                 that_3.root.style.left = '0';
-                var i;
-                for (i in children_1)
-                    that_3.root.removeChild(children_1[i]);
+                for (var _i = 0, children_3 = children_1; _i < children_3.length; _i++) {
+                    var child = children_3[_i];
+                    that_3.root.removeChild(child);
+                }
             }, this.moveTime);
         }
         else {
             this.curPos = loc;
             var that_4 = this;
-            var children_2 = skrolr._Array.from(this.root.children).slice(-distToLeft);
+            var children_4 = skrolr._Array.from(this.root.children).slice(-distToLeft);
             var sumWidth = 0;
-            var len = children_2.length;
+            var len = children_4.length;
             for (var i = 0; i < len; i++) {
-                var obj = children_2[len - i - 1];
+                var obj = children_4[len - i - 1];
                 sumWidth += obj.offsetWidth;
                 var copy = obj.cloneNode(true);
                 this.root.insertBefore(copy, that_4.root.firstChild);
             }
             this.root.style.transition = "0s";
-            this.root.style.left = "-" + sumWidth + 'px';
+            this.root.style.left = -1 * sumWidth + 'px';
             setTimeout(function () {
                 that_4.root.style.transition = that_4.moveTime + 'ms ' + that_4.transitionTiming;
                 that_4.root.style.left = '0';
             }, 0);
             setTimeout(function () {
-                var i;
-                for (i in children_2)
-                    that_4.root.removeChild(children_2[i]);
+                for (var _i = 0, children_5 = children_4; _i < children_5.length; _i++) {
+                    var child = children_5[_i];
+                    that_4.root.removeChild(child);
+                }
             }, this.moveTime);
         }
         return this;

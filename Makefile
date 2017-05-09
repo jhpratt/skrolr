@@ -11,7 +11,7 @@ minify: minify-js minify-css
 minify-js:
 	@echo "Minifying ES6"
 	@uglifyjs --compress --mangle --screw-ie8 --output min/skrolr.es6.min.js -- skrolr.es6.js
-	@Minifying ES3
+	@echo "Minifying ES3"
 	@uglifyjs --compress --mangle --screw-ie8 --output min/skrolr.es3.min.js -- skrolr.es3.js
 
 minify-css:

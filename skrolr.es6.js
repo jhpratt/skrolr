@@ -71,7 +71,8 @@ class skrolr {
             this.start();
     }
     static each(fn) {
-        skrolr.all.forEach((obj) => { fn(obj); });
+        for (let obj of skrolr.all)
+            fn(obj);
     }
     static pmod(x, n) { return ((x % n) + n) % n; }
     toggleArrows() {
@@ -86,11 +87,13 @@ class skrolr {
     autoWidth() {
         const that = this;
         for (let i = 0, leni = this.numWide.length; i < leni; i++) {
-            if (this.numWide[i][0] <= this.root.offsetWidth && (this.root.offsetWidth < this.numWide[i][1] || this.numWide[i][1] === undefined || this.numWide[i][1] === null)) {
+            if (this.numWide[i][0] <= this.root.offsetWidth
+                && (this.root.offsetWidth < this.numWide[i][1]
+                    || this.numWide[i][1] === undefined
+                    || this.numWide[i][1] === null)) {
                 const children = this.root.children;
-                for (let j = 0, lenj = children.length; j < lenj; j++) {
+                for (let j = 0, lenj = children.length; j < lenj; j++)
                     children[j].style.width = 100 / that.numWide[i][2] + "%";
-                }
                 break;
             }
         }
@@ -99,9 +102,8 @@ class skrolr {
     childrenWidth() {
         const children = this.root.children;
         let totalWidth = 0;
-        for (let i = 0, len = children.length; i < len; i++) {
+        for (let i = 0, len = children.length; i < len; i++)
             totalWidth += children[i].offsetWidth;
-        }
         return totalWidth;
     }
     forward() {
@@ -122,22 +124,20 @@ class skrolr {
             this.curPos = loc;
             const children = skrolr._Array.from(this.root.children).slice(0, distToRight);
             let sumWidth = 0;
-            let i;
-            for (i in children) {
-                const obj = children[i];
+            for (let child of children) {
+                const obj = child;
                 sumWidth += obj.offsetWidth;
                 const copy = obj.cloneNode(true);
                 this.root.appendChild(copy);
             }
             this.root.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
-            this.root.style.left = '-' + sumWidth + 'px';
+            this.root.style.left = -1 * sumWidth + 'px';
             const that = this;
             setTimeout(function () {
                 that.root.style.transition = '0s';
                 that.root.style.left = '0';
-                let i;
-                for (i in children)
-                    that.root.removeChild(children[i]);
+                for (let child of children)
+                    that.root.removeChild(child);
             }, this.moveTime);
         }
         else {
@@ -153,15 +153,14 @@ class skrolr {
                 this.root.insertBefore(copy, that.root.firstChild);
             }
             this.root.style.transition = "0s";
-            this.root.style.left = "-" + sumWidth + 'px';
+            this.root.style.left = -1 * sumWidth + 'px';
             setTimeout(function () {
                 that.root.style.transition = that.moveTime + 'ms ' + that.transitionTiming;
                 that.root.style.left = '0';
             }, 0);
             setTimeout(function () {
-                let i;
-                for (i in children)
-                    that.root.removeChild(children[i]);
+                for (let child of children)
+                    that.root.removeChild(child);
             }, this.moveTime);
         }
         return this;
