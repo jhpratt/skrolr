@@ -80,13 +80,13 @@ class skrolr {
 		this.parent.style.overflow = "hidden";
 		
 		// set size of parent element
-		if( typeof params.height !== undefined ) {
+		if( params.height !== undefined ) {
 			this.parent.style.height = params.height;
 		}
-		if( typeof params.width !== undefined ) {
+		if( params.width !== undefined ) {
 			this.parent.style.width = params.width;
 		}
-		if( typeof params.size !== undefined ) {
+		if( params.size !== undefined ) {
 			let size = params.size.split(" ");
 			this.parent.style.width = size[0];
 			this.parent.style.height = size[1];
