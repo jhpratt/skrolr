@@ -86,14 +86,20 @@ class skrolr {
     }
     autoWidth() {
         const that = this;
+        const children = this.root.children;
         for (let i = 0, leni = this.numWide.length; i < leni; i++) {
             if (this.numWide[i][0] <= this.root.offsetWidth
                 && (this.root.offsetWidth < this.numWide[i][1]
                     || this.numWide[i][1] === undefined
                     || this.numWide[i][1] === null)) {
-                const children = this.root.children;
                 for (let j = 0, lenj = children.length; j < lenj; j++)
                     children[j].style.width = 100 / that.numWide[i][2] + "%";
+                while (this.childrenWidth() < this.parent.offsetWidth) {
+                    for (let j = 0, len = children.length; j < len; j++) {
+                        let copy = children[j].cloneNode(true);
+                        this.root.appendChild(copy);
+                    }
+                }
                 break;
             }
         }

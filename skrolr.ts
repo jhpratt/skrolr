@@ -149,17 +149,26 @@ class skrolr {
 	}
 	public autoWidth(): skrolr { // set all children to correct size (in pct)
 		const that = this;
+		const children = this.root.children;
 		for( let i=0, leni=this.numWide.length; i<leni; i++ ) {
 			if( this.numWide[i][0] <= this.root.offsetWidth // if is match OR no value specified (max size)
 				&& (this.root.offsetWidth < this.numWide[i][1]
 				||  this.numWide[i][1] === undefined
 				||  this.numWide[i][1] === null
 				   ) ) { // match
-				const children = this.root.children;
 				
 				// using children.length instead of numObjs because of possible duplication
 				for( let j=0, lenj=children.length; j<lenj; j++ ) // set all children
 					(<HTMLElement>children[j]).style.width = 100 / that.numWide[i][2] + "%";
+				
+				// duplicate children if necessary to cover width
+				while( this.childrenWidth() < this.parent.offsetWidth ) {
+					for( let j=0, len=children.length; j<len; j++ ) {
+						let copy = children[j].cloneNode( true );
+						this.root.appendChild( copy );
+					}
+				}
+				
 				break;
 			}
 		}
@@ -173,8 +182,6 @@ class skrolr {
 			totalWidth += (<HTMLElement>children[i]).offsetWidth;
 		return totalWidth;
 	}
-	
-	// TODO implement childrenWidth() to duplicate elements if width is too small
 	
 	public forward(): skrolr {
 		return this.goto( this.curPos + this.scrollBy, true );
