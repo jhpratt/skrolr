@@ -3,7 +3,7 @@ class skrolr {
     constructor(root, params) {
         this.curPos = 0;
         this.inTransition = false;
-        this.wasRunning = false;
+        this.wasRunning = true;
         this.isRunning = false;
         skrolr.all.push(this);
         switch (typeof root) {

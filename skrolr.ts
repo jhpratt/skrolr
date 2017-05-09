@@ -39,7 +39,7 @@ class skrolr {
 	public waitTime: number;                // time between moving (ms)
 	public transitionTiming: string;        // ease-in-out, linear, etc.
 	public scrollBy: number;                // amount to scroll by each iteration
-	public wasRunning: boolean = false;     // if was running before blur / out of viewport
+	public wasRunning: boolean = true;     // if was running before blur / out of viewport
 	public isRunning: boolean = false;      // is currently running
 	
 	// force positive modulus
