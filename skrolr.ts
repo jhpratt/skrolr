@@ -1,11 +1,10 @@
-/* skrolr v0.4.0
+/* skrolr v1.0.0
  * GNU GPL v3
  * Jacob H. Pratt
  * jhprattdev@gmail.com
  */
 
 // TODO case when there are no children
-// TODO case when skrolr is in transition (do nothing?)
 
 class skrolr {
 	// all skrolrs, for iterating through
@@ -34,6 +33,7 @@ class skrolr {
 	private numObjs: number;                // number of objects, excluding duplicates, arrows, and buttons
 	private curPos: number = 0;             // current position of skrolr, 0 to len-1
 	private interval: number;               // setInterval object (auto-generated)
+	private inTransition: boolean = false;  // is currently transitioning
 	public numWide: number[][];             // number of objects displayed // array of [min, max, size]
 	public moveTime: number;                // time to move (ms)
 	public waitTime: number;                // time between moving (ms)
@@ -191,6 +191,9 @@ class skrolr {
 	}
 	
 	public goto(loc: number, noStop?: boolean): skrolr {
+		if( this.inTransition ) // do nothing if in transition (disallows clicking)
+			return;
+		
 		// stop if running
 		if( noStop !== true )
 			clearInterval( this.interval );
@@ -202,6 +205,7 @@ class skrolr {
 		
 		if( !distToLeft || !distToRight ) // already at location
 			return;
+		this.inTransition = true; // prevent moving again before current is complete
 		if( distToRight <= distToLeft ) { // move left/forward
 			this.curPos = loc;
 			
@@ -259,6 +263,10 @@ class skrolr {
 					that.root.removeChild( child );
 			}, this.moveTime );
 		}
+		const that = this;
+		setTimeout( function() {
+			that.inTransition = false; // done transitioning, allow another action
+		}, this.moveTime );
 		return this;
 	}
 	

@@ -2,6 +2,7 @@
 class skrolr {
     constructor(root, params) {
         this.curPos = 0;
+        this.inTransition = false;
         this.wasRunning = false;
         this.isRunning = false;
         skrolr.all.push(this);
@@ -119,6 +120,8 @@ class skrolr {
         return this.goto(this.curPos - this.scrollBy, true);
     }
     goto(loc, noStop) {
+        if (this.inTransition)
+            return;
         if (noStop !== true)
             clearInterval(this.interval);
         loc = skrolr.pmod(loc, this.numObjs);
@@ -126,6 +129,7 @@ class skrolr {
         let distToRight = skrolr.pmod(loc - this.curPos, this.numObjs);
         if (!distToLeft || !distToRight)
             return;
+        this.inTransition = true;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
             const children = skrolr._Array.from(this.root.children).slice(0, distToRight);
@@ -169,6 +173,10 @@ class skrolr {
                     that.root.removeChild(child);
             }, this.moveTime);
         }
+        const that = this;
+        setTimeout(function () {
+            that.inTransition = false;
+        }, this.moveTime);
         return this;
     }
     start() {

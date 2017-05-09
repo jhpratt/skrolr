@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 var skrolr = (function () {
     function skrolr(root, params) {
         this.curPos = 0;
+        this.inTransition = false;
         this.wasRunning = false;
         this.isRunning = false;
         skrolr.all.push(this);
@@ -134,6 +135,8 @@ var skrolr = (function () {
         return this.goto(this.curPos - this.scrollBy, true);
     };
     skrolr.prototype.goto = function (loc, noStop) {
+        if (this.inTransition)
+            return;
         if (noStop !== true)
             clearInterval(this.interval);
         loc = skrolr.pmod(loc, this.numObjs);
@@ -141,6 +144,7 @@ var skrolr = (function () {
         var distToRight = skrolr.pmod(loc - this.curPos, this.numObjs);
         if (!distToLeft || !distToRight)
             return;
+        this.inTransition = true;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
             var children_1 = skrolr._Array.from(this.root.children).slice(0, distToRight);
@@ -189,6 +193,10 @@ var skrolr = (function () {
                 }
             }, this.moveTime);
         }
+        var that = this;
+        setTimeout(function () {
+            that.inTransition = false;
+        }, this.moveTime);
         return this;
     };
     skrolr.prototype.start = function () {
