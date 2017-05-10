@@ -55,11 +55,11 @@ var skrolr = (function () {
             var that_1 = this;
             var leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
-            leftArrow.onclick = function () { that_1.stop().backward(); };
+            leftArrow.onclick = function () { that_1.stop().goto(that_1.curPos - Math.abs(that_1.scrollBy)); };
             this.parent.appendChild(leftArrow);
             var rightArrow = document.createElement("div");
             rightArrow.className = "sk-arrow sk-right sk-hidden";
-            rightArrow.onclick = function () { that_1.stop().forward(); };
+            rightArrow.onclick = function () { that_1.stop().goto(that_1.curPos + Math.abs(that_1.scrollBy)); };
             this.parent.appendChild(rightArrow);
             this.parent.addEventListener("mouseover", function () { that_1.toggleArrows(); });
             this.parent.addEventListener("mouseout", function () { that_1.toggleArrows(); });

@@ -45,11 +45,11 @@ class skrolr {
             const that = this;
             let leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
-            leftArrow.onclick = function () { that.stop().backward(); };
+            leftArrow.onclick = function () { that.stop().goto(that.curPos - Math.abs(that.scrollBy)); };
             this.parent.appendChild(leftArrow);
             let rightArrow = document.createElement("div");
             rightArrow.className = "sk-arrow sk-right sk-hidden";
-            rightArrow.onclick = function () { that.stop().forward(); };
+            rightArrow.onclick = function () { that.stop().goto(that.curPos + Math.abs(that.scrollBy)); };
             this.parent.appendChild(rightArrow);
             this.parent.addEventListener("mouseover", function () { that.toggleArrows(); });
             this.parent.addEventListener("mouseout", function () { that.toggleArrows(); });

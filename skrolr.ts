@@ -102,12 +102,12 @@ class skrolr {
 			
 			let leftArrow: HTMLElement = document.createElement( "div" );
 			leftArrow.className = "sk-arrow sk-left sk-hidden";
-			leftArrow.onclick = function() { that.stop().backward(); }
+			leftArrow.onclick = function() { that.stop().goto( that.curPos - Math.abs(that.scrollBy) ); } // not .backward() because of negative scrollBy values
 			this.parent.appendChild( leftArrow );
 			
 			let rightArrow: HTMLElement = document.createElement( "div" );
 			rightArrow.className = "sk-arrow sk-right sk-hidden";
-			rightArrow.onclick = function() { that.stop().forward(); }
+			rightArrow.onclick = function() { that.stop().goto( that.curPos + Math.abs(that.scrollBy) ); } // not .forward() because of negative scrollBy values
 			this.parent.appendChild( rightArrow );
 			
 			// show/hide on mouseover/out
