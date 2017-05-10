@@ -132,7 +132,7 @@ class skrolr {
         this.inTransition = true;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
-            const children = skrolr._Array.from(this.root.children).slice(0, distToRight);
+            const children = skrolr.Array.from(this.root.children).slice(0, distToRight);
             let sumWidth = 0;
             for (let child of children) {
                 const obj = child;
@@ -153,7 +153,7 @@ class skrolr {
         else {
             this.curPos = loc;
             const that = this;
-            const children = skrolr._Array.from(this.root.children).slice(-distToLeft);
+            const children = skrolr.Array.from(this.root.children).slice(-distToLeft);
             let sumWidth = 0;
             let len = children.length;
             for (let i = 0; i < len; i++) {
@@ -206,7 +206,7 @@ class skrolr {
     }
 }
 skrolr.all = [];
-skrolr._Array = class extends Array {
+skrolr.Array = class extends Array {
     static from(obj) {
         let arr = [];
         for (let i = 0, len = obj.length; i < len; i++) {

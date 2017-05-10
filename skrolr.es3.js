@@ -147,7 +147,7 @@ var skrolr = (function () {
         this.inTransition = true;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
-            var children_1 = skrolr._Array.from(this.root.children).slice(0, distToRight);
+            var children_1 = skrolr.Array.from(this.root.children).slice(0, distToRight);
             var sumWidth = 0;
             for (var _i = 0, children_2 = children_1; _i < children_2.length; _i++) {
                 var child = children_2[_i];
@@ -171,7 +171,7 @@ var skrolr = (function () {
         else {
             this.curPos = loc;
             var that_4 = this;
-            var children_4 = skrolr._Array.from(this.root.children).slice(-distToLeft);
+            var children_4 = skrolr.Array.from(this.root.children).slice(-distToLeft);
             var sumWidth = 0;
             var len = children_4.length;
             for (var i = 0; i < len; i++) {
@@ -227,7 +227,7 @@ var skrolr = (function () {
     return skrolr;
 }());
 skrolr.all = [];
-skrolr._Array = (function (_super) {
+skrolr.Array = (function (_super) {
     __extends(class_1, _super);
     function class_1() {
         return _super !== null && _super.apply(this, arguments) || this;

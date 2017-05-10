@@ -17,7 +17,7 @@ class skrolr {
 	}
 	
 	// convert HTMLCollection to Array (ES3 polyfill for Array.from)
-	private static _Array = class extends Array {
+	private static Array = class extends Array {
 		public static from( obj: any ) {
 			let arr = [];
 			for( let i=0, len=obj.length; i<len; i++ ) {
@@ -210,7 +210,7 @@ class skrolr {
 			this.curPos = loc;
 			
 			// copy n elements from beginning to end
-			const children = skrolr._Array.from( <HTMLCollection>this.root.children ).slice( 0, distToRight );
+			const children = skrolr.Array.from( <HTMLCollection>this.root.children ).slice( 0, distToRight );
 			let sumWidth: number = 0;
 			for( let child of children ) {
 				const obj = <HTMLElement>child;
@@ -237,7 +237,7 @@ class skrolr {
 			
 			const that = this;
 			// copy n elements from end to beginning
-			const children = skrolr._Array.from( this.root.children ).slice( -distToLeft );
+			const children = skrolr.Array.from( this.root.children ).slice( -distToLeft );
 			let sumWidth: number = 0;
 			let len = children.length; // to go in reverse order
 			
