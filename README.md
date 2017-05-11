@@ -11,7 +11,7 @@
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-*skrolr* is a JavaScript library intended to make creating responsive, easy to use marquee a piece of cake. *skrolr* has no dependencies (not even jQuery!), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*? If all you want is the basics, it's only **418 bytes total**.
+*skrolr* is a JavaScript library intended to make creating responsive, easy to use marquee a piece of cake. *skrolr* has no dependencies (not even jQuery!), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*? If all you want is the basics, it's only **396 bytes total**.
 
 Don't believe how easy it is? Here's all that's required to create a basic *skrolr*:
 
