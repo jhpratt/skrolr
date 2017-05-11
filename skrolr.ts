@@ -4,7 +4,10 @@
  * jhprattdev@gmail.com
  */
 
-// TODO case when there are no children
+// TODO #17 v1.1.0 re-initializing
+// TODO #25 v1.2.0 case when there are no children
+// TODO #20 v1.3.0 dragging on mobile
+// TODO #28 BUG jumps with scrollBy = -1
 
 class skrolr {
 	// all skrolrs, for iterating through

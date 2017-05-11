@@ -21,3 +21,6 @@ minify-css:
 clean:
 	@rm min/*
 	@echo "Removed minified files"
+
+todo:
+	@todo skrolr.ts
