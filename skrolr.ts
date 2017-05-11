@@ -22,10 +22,9 @@ class skrolr {
 	// convert HTMLCollection to Array (ES3 polyfill for Array.from)
 	private static Array = class extends Array {
 		public static from( obj: any ) {
-			let arr = [];
-			for( let i=0, len=obj.length; i<len; i++ ) {
-				arr[i] = obj[i];
-			}
+			let arr: any = [];
+			for( let o of obj )
+				arr.push( o );
 			return arr;
 		}
 	}
@@ -174,8 +173,8 @@ class skrolr {
 				   ) ) { // match
 				
 				// using children.length instead of numObjs because of possible duplication
-				for( let j=0, lenj=children.length; j<lenj; j++ ) // set all children
-					(<HTMLElement>children[j]).style.width = 100 / that.numWide[i][2] + "%";
+				for( let child of skrolr.Array.from(children) ) // set all children
+					child.style.width = 100 / that.numWide[i][2] + "%";
 				
 				// duplicate children if necessary to cover width
 				while( this.childrenWidth() < this.parent.offsetWidth ) {

@@ -123,8 +123,10 @@ var skrolr = (function () {
                 && (this.root.offsetWidth < this.numWide[i][1]
                     || this.numWide[i][1] === undefined
                     || this.numWide[i][1] === null)) {
-                for (var j = 0, lenj = children.length; j < lenj; j++)
-                    children[j].style.width = 100 / that.numWide[i][2] + "%";
+                for (var _i = 0, _a = skrolr.Array.from(children); _i < _a.length; _i++) {
+                    var child = _a[_i];
+                    child.style.width = 100 / that.numWide[i][2] + "%";
+                }
                 while (this.childrenWidth() < this.parent.offsetWidth) {
                     for (var j = 0, len = children.length; j < len; j++) {
                         var copy = children[j].cloneNode(true);
@@ -162,11 +164,7 @@ var skrolr = (function () {
         this.inTransition = true;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
-<<<<<<< HEAD
-            var children_1 = skrolr.Array.from(this.root.children).slice(0, distToRight);
-=======
             var children_2 = skrolr.Array.from(this.root.children).slice(0, distToRight);
->>>>>>> Randomize children (#23)
             var sumWidth = 0;
             for (var _i = 0, children_3 = children_2; _i < children_3.length; _i++) {
                 var child = children_3[_i];
@@ -190,11 +188,7 @@ var skrolr = (function () {
         else {
             this.curPos = loc;
             var that_4 = this;
-<<<<<<< HEAD
-            var children_4 = skrolr.Array.from(this.root.children).slice(-distToLeft);
-=======
             var children_5 = skrolr.Array.from(this.root.children).slice(-distToLeft);
->>>>>>> Randomize children (#23)
             var sumWidth = 0;
             var len = children_5.length;
             for (var i = 0; i < len; i++) {
@@ -257,8 +251,9 @@ skrolr.Array = (function (_super) {
     }
     class_1.from = function (obj) {
         var arr = [];
-        for (var i = 0, len = obj.length; i < len; i++) {
-            arr[i] = obj[i];
+        for (var _i = 0, obj_1 = obj; _i < obj_1.length; _i++) {
+            var o = obj_1[_i];
+            arr.push(o);
         }
         return arr;
     };

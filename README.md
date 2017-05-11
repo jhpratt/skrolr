@@ -26,7 +26,7 @@ Don't believe how easy it is? Here's all that's required to create a basic *skro
 
 <script>
 let x = document.getElementById("obj");
-new skrolr(x);
+skrolr(x);
 </script>
 ```
 

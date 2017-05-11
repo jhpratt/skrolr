@@ -105,8 +105,8 @@ class skrolr {
                 && (this.root.offsetWidth < this.numWide[i][1]
                     || this.numWide[i][1] === undefined
                     || this.numWide[i][1] === null)) {
-                for (let j = 0, lenj = children.length; j < lenj; j++)
-                    children[j].style.width = 100 / that.numWide[i][2] + "%";
+                for (let child of skrolr.Array.from(children))
+                    child.style.width = 100 / that.numWide[i][2] + "%";
                 while (this.childrenWidth() < this.parent.offsetWidth) {
                     for (let j = 0, len = children.length; j < len; j++) {
                         let copy = children[j].cloneNode(true);
@@ -221,9 +221,8 @@ skrolr.all = [];
 skrolr.Array = class extends Array {
     static from(obj) {
         let arr = [];
-        for (let i = 0, len = obj.length; i < len; i++) {
-            arr[i] = obj[i];
-        }
+        for (let o of obj)
+            arr.push(o);
         return arr;
     }
 };
