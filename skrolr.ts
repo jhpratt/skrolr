@@ -1,4 +1,4 @@
-/* skrolr v1.0.1
+/* skrolr v1.1.0
  * GNU GPL v3
  * Jacob H. Pratt
  * jhprattdev@gmail.com
@@ -39,7 +39,7 @@ class skrolr {
 	public waitTime: number;                // time between moving (ms)
 	public transitionTiming: string;        // ease-in-out, linear, etc.
 	public scrollBy: number;                // amount to scroll by each iteration
-	public wasRunning: boolean = true;     // if was running before blur / out of viewport
+	public wasRunning: boolean = true;      // if was running before blur / out of viewport
 	public isRunning: boolean = false;      // is currently running
 	
 	// force positive modulus
@@ -74,6 +74,19 @@ class skrolr {
 		// auto-generated variables
 		this.numObjs = this.root.children.length; // for determining if left/right is faster
 		
+		// randomize children
+		if( params.randomize === true ) {
+			let children = skrolr.Array.from( this.root.children );
+			for( let i=this.numObjs-1; i>0; i--) {
+				let j = Math.floor( Math.random()*(i+1) ); // random index
+				[ children[i], children[j] ] = [ children[j], children[i] ];
+			}
+			let child; while( child = this.root.firstChild ) // remove all elements
+				this.root.removeChild( child );
+			for( let child of children ) // add back in randomized order
+				this.root.appendChild( child );
+		}
+		
 		// create parent element
 		this.parent = document.createElement( "div" );
 		this.parent.style.position = "relative";
@@ -94,7 +107,7 @@ class skrolr {
 		
 		this.root.parentElement.insertBefore( this.parent, this.root );
 		this.parent.appendChild( this.root );
-		this.autoWidth() // set width of all children
+		this.autoWidth(); // set width of all children
 		// end create parent
 		
 		if( params.arrows === true ) { // create arrows, hidden

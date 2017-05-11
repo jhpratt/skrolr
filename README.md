@@ -174,6 +174,16 @@ new skrolr( "id", {
 });
 ```
 
+### Randomize
+
+You can randomize the order of the children on load.
+
+```javascript
+new skrolr( "id", {
+	randomize: true
+});
+```
+
 ### Additional features
 
  - Stop scrolling if viewport is blurred

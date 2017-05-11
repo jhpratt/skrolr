@@ -24,6 +24,18 @@ class skrolr {
         this.transitionTiming = params.transitionTiming || "ease-in-out";
         this.scrollBy = params.scrollBy || 1;
         this.numObjs = this.root.children.length;
+        if (params.randomize === true) {
+            let children = skrolr.Array.from(this.root.children);
+            for (let i = this.numObjs - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [children[i], children[j]] = [children[j], children[i]];
+            }
+            let child;
+            while (child = this.root.firstChild)
+                this.root.removeChild(child);
+            for (let child of children)
+                this.root.appendChild(child);
+        }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";

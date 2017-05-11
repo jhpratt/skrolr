@@ -34,6 +34,20 @@ var skrolr = (function () {
         this.transitionTiming = params.transitionTiming || "ease-in-out";
         this.scrollBy = params.scrollBy || 1;
         this.numObjs = this.root.children.length;
+        if (params.randomize === true) {
+            var children = skrolr.Array.from(this.root.children);
+            for (var i = this.numObjs - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                _a = [children[j], children[i]], children[i] = _a[0], children[j] = _a[1];
+            }
+            var child = void 0;
+            while (child = this.root.firstChild)
+                this.root.removeChild(child);
+            for (var _i = 0, children_1 = children; _i < children_1.length; _i++) {
+                var child_1 = children_1[_i];
+                this.root.appendChild(child_1);
+            }
+        }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
@@ -83,6 +97,7 @@ var skrolr = (function () {
         }
         if (document.hasFocus())
             this.start();
+        var _a;
     }
     skrolr.each = function (fn) {
         for (var _i = 0, _a = skrolr.all; _i < _a.length; _i++) {
@@ -147,10 +162,14 @@ var skrolr = (function () {
         this.inTransition = true;
         if (distToRight <= distToLeft) {
             this.curPos = loc;
+<<<<<<< HEAD
             var children_1 = skrolr.Array.from(this.root.children).slice(0, distToRight);
+=======
+            var children_2 = skrolr.Array.from(this.root.children).slice(0, distToRight);
+>>>>>>> Randomize children (#23)
             var sumWidth = 0;
-            for (var _i = 0, children_2 = children_1; _i < children_2.length; _i++) {
-                var child = children_2[_i];
+            for (var _i = 0, children_3 = children_2; _i < children_3.length; _i++) {
+                var child = children_3[_i];
                 var obj = child;
                 sumWidth += obj.offsetWidth;
                 var copy = obj.cloneNode(true);
@@ -162,8 +181,8 @@ var skrolr = (function () {
             setTimeout(function () {
                 that_3.root.style.transition = '0s';
                 that_3.root.style.left = '0';
-                for (var _i = 0, children_3 = children_1; _i < children_3.length; _i++) {
-                    var child = children_3[_i];
+                for (var _i = 0, children_4 = children_2; _i < children_4.length; _i++) {
+                    var child = children_4[_i];
                     that_3.root.removeChild(child);
                 }
             }, this.moveTime);
@@ -171,11 +190,15 @@ var skrolr = (function () {
         else {
             this.curPos = loc;
             var that_4 = this;
+<<<<<<< HEAD
             var children_4 = skrolr.Array.from(this.root.children).slice(-distToLeft);
+=======
+            var children_5 = skrolr.Array.from(this.root.children).slice(-distToLeft);
+>>>>>>> Randomize children (#23)
             var sumWidth = 0;
-            var len = children_4.length;
+            var len = children_5.length;
             for (var i = 0; i < len; i++) {
-                var obj = children_4[len - i - 1];
+                var obj = children_5[len - i - 1];
                 sumWidth += obj.offsetWidth;
                 var copy = obj.cloneNode(true);
                 this.root.insertBefore(copy, that_4.root.firstChild);
@@ -187,8 +210,8 @@ var skrolr = (function () {
                 that_4.root.style.left = '0';
             }, 0);
             setTimeout(function () {
-                for (var _i = 0, children_5 = children_4; _i < children_5.length; _i++) {
-                    var child = children_5[_i];
+                for (var _i = 0, children_6 = children_5; _i < children_6.length; _i++) {
+                    var child = children_6[_i];
                     that_4.root.removeChild(child);
                 }
             }, this.moveTime);
