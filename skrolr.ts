@@ -1,4 +1,4 @@
-/* skrolr v1.0.0
+/* skrolr v1.0.1
  * GNU GPL v3
  * Jacob H. Pratt
  * jhprattdev@gmail.com

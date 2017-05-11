@@ -1,6 +1,4 @@
-<sub><super>NB: *skrolr* relies on CSS transitions, and has no JavaScript backup. All modern browsers support this, but IE9- does not. Everything *should* work in IE10+, as well as any modern version of Firefox, Chrome, and Safari (as they auto-update).
-
-Also, the jQuery library is only included for compatibility purposes. There is no requirement to use jQuery with *skrolr*.</super></sub>
+<sub><super>NB: *skrolr* relies on CSS transitions, and has no JavaScript backup. All modern browsers support this, but IE9- does not. Everything *should* work in IE10+, as well as any modern version of Firefox, Chrome, and Safari (as they auto-update). Also, the jQuery library is only included for compatibility purposes. There is no requirement to use jQuery with *skrolr*.</super></sub>
 
 *skrolr* library
 ===
@@ -13,7 +11,7 @@ Also, the jQuery library is only included for compatibility purposes. There is n
 ### &#x2713; Lightweight.
 ### &#x2713; Easy to use.
 
-*skrolr* is a JavaScript library intended to make creating responsive, easy to use marquee a piece of cake. *skrolr* has no dependencies (not even jQuery!), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*? If all you want is the basics, it's only **495 bytes total**.
+*skrolr* is a JavaScript library intended to make creating responsive, easy to use marquee a piece of cake. *skrolr* has no dependencies (not even jQuery!), and is very lightweight, so it can be used pretty much everywhere. How small is *skrolr*? If all you want is the basics, it's only **418 bytes total**.
 
 Don't believe how easy it is? Here's all that's required to create a basic *skrolr*:
 
@@ -28,7 +26,7 @@ Don't believe how easy it is? Here's all that's required to create a basic *skro
 
 <script>
 let x = document.getElementById("obj");
-skrolr(x);
+new skrolr(x);
 </script>
 ```
 
