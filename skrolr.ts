@@ -14,10 +14,7 @@ class skrolr {
 	private static all: skrolr[] = [];
 	
 	// run specified function on all skrolr objects
-	public static each( fn: any ): void {
-		for( let obj of skrolr.all )
-			fn(obj);
-	}
+	public static each = ( fn: any ): void => skrolr.all.forEach( obj => fn(obj) );
 	
 	// convert HTMLCollection to Array (ES3 polyfill for Array.from)
 	private static Array = class extends Array {
@@ -28,6 +25,9 @@ class skrolr {
 			return arr;
 		}
 	}
+	
+	// don't use Array.prototype.forEach.call() hack
+	private static forEach = ( obj: any, fn: any ): void => { for( let o of obj ) fn( o ) };
 	
 	// initialize variables for later
 	private readonly parent: HTMLElement;   // generated <div> containing root element
@@ -45,7 +45,7 @@ class skrolr {
 	public isRunning: boolean = false;      // is currently running
 	
 	// force positive modulus
-	private static pmod( x:number, n:number ): number { return ((x%n)+n)%n; }
+	private static pmod = (x:number, n:number) => ((x%n)+n)%n;
 	
 	public constructor( root: HTMLElement|string, params: {[key:string]: any} ) {
 		skrolr.all.push( this );
@@ -81,7 +81,7 @@ class skrolr {
 			let children = skrolr.Array.from( this.root.children );
 			for( let i=this.numObjs-1; i>0; i--) {
 				let j = Math.floor( Math.random()*(i+1) ); // random index
-				[ children[i], children[j] ] = [ children[j], children[i] ];
+				[ children[i], children[j] ] = [ children[j], children[i] ]; // switch random index with "beginning"
 			}
 			let child; while( child = this.root.firstChild ) // remove all elements
 				this.root.removeChild( child );
@@ -95,12 +95,10 @@ class skrolr {
 		this.parent.style.overflow = "hidden";
 		
 		// set size of parent element
-		if( params.height !== undefined ) {
+		if( params.height !== undefined )
 			this.parent.style.height = params.height;
-		}
-		if( params.width !== undefined ) {
+		if( params.width !== undefined )
 			this.parent.style.width = params.width;
-		}
 		if( params.size !== undefined ) {
 			let size = params.size.split(" ");
 			this.parent.style.width = size[0];
@@ -113,21 +111,19 @@ class skrolr {
 		// end create parent
 		
 		if( params.arrows === true ) { // create arrows, hidden
-			const that = this;
-			
 			let leftArrow: HTMLElement = document.createElement( "div" );
 			leftArrow.className = "sk-arrow sk-left sk-hidden";
-			leftArrow.onclick = function() { that.stop().goto( that.curPos - Math.abs(that.scrollBy) ); } // not .backward() because of negative scrollBy values
+			leftArrow.onclick = () => this.stop().goto( this.curPos - Math.abs(this.scrollBy) ); // not .backward() because of negative scrollBy values
 			this.parent.appendChild( leftArrow );
 			
 			let rightArrow: HTMLElement = document.createElement( "div" );
 			rightArrow.className = "sk-arrow sk-right sk-hidden";
-			rightArrow.onclick = function() { that.stop().goto( that.curPos + Math.abs(that.scrollBy) ); } // not .forward() because of negative scrollBy values
+			rightArrow.onclick = () => this.stop().goto( this.curPos + Math.abs(this.scrollBy) ); // not .forward() because of negative scrollBy values
 			this.parent.appendChild( rightArrow );
 			
 			// show/hide on mouseover/out
-			this.parent.addEventListener( "mouseover", function() { that.toggleArrows(); } );
-			this.parent.addEventListener( "mouseout", function() { that.toggleArrows(); } );
+			this.parent.addEventListener( "mouseover", () => this.toggleArrows() );
+			this.parent.addEventListener( "mouseout", () => this.toggleArrows() );
 		}
 		
 		if( params.buttons === true ) { // create buttons, hidden
@@ -136,15 +132,14 @@ class skrolr {
 			this.parent.appendChild( buttons );
 			
 			// show/hide on mouseover/out
-			const that = this;
-			this.parent.addEventListener( "mouseover", function() { that.toggleButtons(); } );
-			this.parent.addEventListener( "mouseout", function() { that.toggleButtons(); } );
+			this.parent.addEventListener( "mouseover", () => this.toggleButtons() );
+			this.parent.addEventListener( "mouseout", () => this.toggleButtons() );
 			
 			// create individual buttons
 			for( let i=0; i<this.numObjs; i++ ) {
 				let btn = document.createElement( "div" ); // buttons inside container
 				btn.className = "sk-button";
-				btn.onclick = function() { that.goto(i); };
+				btn.onclick = () => this.goto(i);
 				buttons.appendChild( btn );
 			}
 		}
@@ -163,7 +158,6 @@ class skrolr {
 		return this;
 	}
 	public autoWidth(): skrolr { // set all children to correct size (in pct)
-		const that = this;
 		const children = this.root.children;
 		for( let i=0, leni=this.numWide.length; i<leni; i++ ) {
 			if( this.numWide[i][0] <= this.root.offsetWidth // if is match OR no value specified (max size)
@@ -172,13 +166,12 @@ class skrolr {
 				||  this.numWide[i][1] === null
 				   ) ) { // match
 				
-				// using children.length instead of numObjs because of possible duplication
-				for( let child of skrolr.Array.from(children) ) // set all children
-					child.style.width = 100 / that.numWide[i][2] + "%";
+				// set width of each child
+				skrolr.forEach( children, (child: HTMLElement) => child.style.width = 100 / this.numWide[i][2] + "%" );
 				
 				// duplicate children if necessary to cover width
 				while( this.childrenWidth() < this.parent.offsetWidth ) {
-					for( let j=0, len=children.length; j<len; j++ ) {
+					for( let j=0, len=children.length; j<len; j++ ) { // TODO figure out why arrow function doesn't work here
 						let copy = children[j].cloneNode( true );
 						this.root.appendChild( copy );
 					}
@@ -190,36 +183,26 @@ class skrolr {
 		return this;
 	}
 	private childrenWidth(): number { // get total width of all children of an object
-		const children = this.root.children;
 		let totalWidth: number = 0;
-		
-		for( let i=0, len=children.length; i<len; i++ )
-			totalWidth += (<HTMLElement>children[i]).offsetWidth;
+		skrolr.forEach( this.root.children, (child:HTMLElement) => totalWidth += child.offsetWidth );
 		return totalWidth;
 	}
 	
-	public forward(): skrolr {
-		return this.goto( this.curPos + this.scrollBy, true );
-	}
-	public backward(): skrolr {
-		return this.goto( this.curPos - this.scrollBy, true );
-	}
+	public forward = (): skrolr => this.goto( this.curPos + this.scrollBy, true );
+	public backward = (): skrolr => this.goto( this.curPos - this.scrollBy, true );
 	
 	public goto(loc: number, noStop?: boolean): skrolr {
-		if( this.inTransition ) // do nothing if in transition (disallows clicking)
-			return;
+		if( this.inTransition ) return; // do nothing if in transition (disallows clicking)
 		
 		// stop if running
-		if( noStop !== true )
-			clearInterval( this.interval );
+		if( noStop !== true ) clearInterval( this.interval );
 		
 		loc = skrolr.pmod(loc, this.numObjs);
 		
 		let distToLeft: number = skrolr.pmod( this.curPos-loc, this.numObjs );
 		let distToRight: number = skrolr.pmod( loc-this.curPos, this.numObjs );
 		
-		if( !distToLeft || !distToRight ) // already at location
-			return;
+		if( !distToLeft || !distToRight ) return; // already at location
 		this.inTransition = true; // prevent moving again before current is complete
 		if( distToRight <= distToLeft ) { // move left/forward
 			this.curPos = loc;
@@ -239,18 +222,15 @@ class skrolr {
 			this.root.style.left = -1 * sumWidth + 'px';
 			
 			// remove n elements from beginning
-			const that = this;
-			setTimeout( function() {
-				that.root.style.transition = '0s';
-				that.root.style.left = '0';
-				for( let child of children )
-					that.root.removeChild( child );
+			setTimeout( () => {
+				this.root.style.transition = '0s';
+				this.root.style.left = '0';
+				skrolr.forEach( children, (child: HTMLElement) => this.root.removeChild( child ) );
 			}, this.moveTime );
 		}
 		else { // move right/backward
 			this.curPos = loc;
 			
-			const that = this;
 			// copy n elements from end to beginning
 			const children = skrolr.Array.from( this.root.children ).slice( -distToLeft );
 			let sumWidth: number = 0;
@@ -260,27 +240,24 @@ class skrolr {
 				const obj = <HTMLElement>children[len-i-1]; // -1 because len is 1-index, not 0-index
 				sumWidth += obj.offsetWidth;
 				const copy = obj.cloneNode( true );
-				this.root.insertBefore( copy, that.root.firstChild );
+				this.root.insertBefore( copy, this.root.firstChild );
 			}
 			
 			// move
 			this.root.style.transition = "0s";
 			this.root.style.left = -1 * sumWidth + 'px';
 			
-			// const that already declared
-			setTimeout( function() { // force queue in correct order
-				that.root.style.transition = that.moveTime + 'ms ' + that.transitionTiming;
-				that.root.style.left = '0';
+			setTimeout( () => { // force queue in correct order
+				this.root.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
+				this.root.style.left = '0';
 			}, 0);
-			setTimeout( function() {
+			setTimeout( () => {
 				// remove n elements from end
-				for( let child of children )
-					that.root.removeChild( child );
+				skrolr.forEach( children, (child: HTMLElement) => this.root.removeChild(child) );
 			}, this.moveTime );
 		}
-		const that = this;
-		setTimeout( function() {
-			that.inTransition = false; // done transitioning, allow another action
+		setTimeout( () => {
+			this.inTransition = false; // done transitioning, allow another action
 		}, this.moveTime );
 		return this;
 	}
@@ -289,16 +266,12 @@ class skrolr {
 		this.wasRunning = true;
 		this.isRunning = true;
 		
-		const that = this;
 		clearInterval( this.interval ); // don't allow multiple intervals
-		this.interval = setInterval( function() {
-			that.forward();
-		}, this.moveTime + this.waitTime );
+		this.interval = setInterval( () => this.forward(), this.moveTime + this.waitTime );
 		return this;
 	}
 	public stop( noSet?: boolean ): skrolr {
-		if( !noSet ) // only set wasRunning if noSet is excluded
-			this.wasRunning = false;
+		if( !noSet ) this.wasRunning = false; // only set wasRunning if noSet is excluded
 		this.isRunning = false;
 		clearInterval( this.interval );
 		return this;

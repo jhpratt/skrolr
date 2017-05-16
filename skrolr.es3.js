@@ -11,10 +11,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var skrolr = (function () {
     function skrolr(root, params) {
+        var _this = this;
         this.curPos = 0;
         this.inTransition = false;
         this.wasRunning = true;
         this.isRunning = false;
+        this.forward = function () { return _this.goto(_this.curPos + _this.scrollBy, true); };
+        this.backward = function () { return _this.goto(_this.curPos - _this.scrollBy, true); };
         skrolr.all.push(this);
         switch (typeof root) {
             case "object":
@@ -51,12 +54,10 @@ var skrolr = (function () {
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
-        if (params.height !== undefined) {
+        if (params.height !== undefined)
             this.parent.style.height = params.height;
-        }
-        if (params.width !== undefined) {
+        if (params.width !== undefined)
             this.parent.style.width = params.width;
-        }
         if (params.size !== undefined) {
             var size = params.size.split(" ");
             this.parent.style.width = size[0];
@@ -66,29 +67,27 @@ var skrolr = (function () {
         this.parent.appendChild(this.root);
         this.autoWidth();
         if (params.arrows === true) {
-            var that_1 = this;
             var leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";
-            leftArrow.onclick = function () { that_1.stop().goto(that_1.curPos - Math.abs(that_1.scrollBy)); };
+            leftArrow.onclick = function () { return _this.stop().goto(_this.curPos - Math.abs(_this.scrollBy)); };
             this.parent.appendChild(leftArrow);
             var rightArrow = document.createElement("div");
             rightArrow.className = "sk-arrow sk-right sk-hidden";
-            rightArrow.onclick = function () { that_1.stop().goto(that_1.curPos + Math.abs(that_1.scrollBy)); };
+            rightArrow.onclick = function () { return _this.stop().goto(_this.curPos + Math.abs(_this.scrollBy)); };
             this.parent.appendChild(rightArrow);
-            this.parent.addEventListener("mouseover", function () { that_1.toggleArrows(); });
-            this.parent.addEventListener("mouseout", function () { that_1.toggleArrows(); });
+            this.parent.addEventListener("mouseover", function () { return _this.toggleArrows(); });
+            this.parent.addEventListener("mouseout", function () { return _this.toggleArrows(); });
         }
         if (params.buttons === true) {
             var buttons = document.createElement("div");
             buttons.className = "sk-button-cont sk-hidden";
             this.parent.appendChild(buttons);
-            var that_2 = this;
-            this.parent.addEventListener("mouseover", function () { that_2.toggleButtons(); });
-            this.parent.addEventListener("mouseout", function () { that_2.toggleButtons(); });
+            this.parent.addEventListener("mouseover", function () { return _this.toggleButtons(); });
+            this.parent.addEventListener("mouseout", function () { return _this.toggleButtons(); });
             var _loop_1 = function (i) {
                 var btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = function () { that_2.goto(i); };
+                btn.onclick = function () { return _this.goto(i); };
                 buttons.appendChild(btn);
             };
             for (var i = 0; i < this.numObjs; i++) {
@@ -99,13 +98,6 @@ var skrolr = (function () {
             this.start();
         var _a;
     }
-    skrolr.each = function (fn) {
-        for (var _i = 0, _a = skrolr.all; _i < _a.length; _i++) {
-            var obj = _a[_i];
-            fn(obj);
-        }
-    };
-    skrolr.pmod = function (x, n) { return ((x % n) + n) % n; };
     skrolr.prototype.toggleArrows = function () {
         this.parent.children[1].classList.toggle("sk-hidden");
         this.parent.children[2].classList.toggle("sk-hidden");
@@ -116,42 +108,38 @@ var skrolr = (function () {
         return this;
     };
     skrolr.prototype.autoWidth = function () {
-        var that = this;
+        var _this = this;
         var children = this.root.children;
-        for (var i = 0, leni = this.numWide.length; i < leni; i++) {
-            if (this.numWide[i][0] <= this.root.offsetWidth
-                && (this.root.offsetWidth < this.numWide[i][1]
-                    || this.numWide[i][1] === undefined
-                    || this.numWide[i][1] === null)) {
-                for (var _i = 0, _a = skrolr.Array.from(children); _i < _a.length; _i++) {
-                    var child = _a[_i];
-                    child.style.width = 100 / that.numWide[i][2] + "%";
-                }
-                while (this.childrenWidth() < this.parent.offsetWidth) {
+        var _loop_2 = function (i, leni) {
+            if (this_1.numWide[i][0] <= this_1.root.offsetWidth
+                && (this_1.root.offsetWidth < this_1.numWide[i][1]
+                    || this_1.numWide[i][1] === undefined
+                    || this_1.numWide[i][1] === null)) {
+                skrolr.forEach(children, function (child) { return child.style.width = 100 / _this.numWide[i][2] + "%"; });
+                while (this_1.childrenWidth() < this_1.parent.offsetWidth) {
                     for (var j = 0, len = children.length; j < len; j++) {
                         var copy = children[j].cloneNode(true);
-                        this.root.appendChild(copy);
+                        this_1.root.appendChild(copy);
                     }
                 }
-                break;
+                return "break";
             }
+        };
+        var this_1 = this;
+        for (var i = 0, leni = this.numWide.length; i < leni; i++) {
+            var state_1 = _loop_2(i, leni);
+            if (state_1 === "break")
+                break;
         }
         return this;
     };
     skrolr.prototype.childrenWidth = function () {
-        var children = this.root.children;
         var totalWidth = 0;
-        for (var i = 0, len = children.length; i < len; i++)
-            totalWidth += children[i].offsetWidth;
+        skrolr.forEach(this.root.children, function (child) { return totalWidth += child.offsetWidth; });
         return totalWidth;
     };
-    skrolr.prototype.forward = function () {
-        return this.goto(this.curPos + this.scrollBy, true);
-    };
-    skrolr.prototype.backward = function () {
-        return this.goto(this.curPos - this.scrollBy, true);
-    };
     skrolr.prototype.goto = function (loc, noStop) {
+        var _this = this;
         if (this.inTransition)
             return;
         if (noStop !== true)
@@ -175,55 +163,44 @@ var skrolr = (function () {
             }
             this.root.style.transition = this.moveTime + 'ms ' + this.transitionTiming;
             this.root.style.left = -1 * sumWidth + 'px';
-            var that_3 = this;
             setTimeout(function () {
-                that_3.root.style.transition = '0s';
-                that_3.root.style.left = '0';
-                for (var _i = 0, children_4 = children_2; _i < children_4.length; _i++) {
-                    var child = children_4[_i];
-                    that_3.root.removeChild(child);
-                }
+                _this.root.style.transition = '0s';
+                _this.root.style.left = '0';
+                skrolr.forEach(children_2, function (child) { return _this.root.removeChild(child); });
             }, this.moveTime);
         }
         else {
             this.curPos = loc;
-            var that_4 = this;
-            var children_5 = skrolr.Array.from(this.root.children).slice(-distToLeft);
+            var children_4 = skrolr.Array.from(this.root.children).slice(-distToLeft);
             var sumWidth = 0;
-            var len = children_5.length;
+            var len = children_4.length;
             for (var i = 0; i < len; i++) {
-                var obj = children_5[len - i - 1];
+                var obj = children_4[len - i - 1];
                 sumWidth += obj.offsetWidth;
                 var copy = obj.cloneNode(true);
-                this.root.insertBefore(copy, that_4.root.firstChild);
+                this.root.insertBefore(copy, this.root.firstChild);
             }
             this.root.style.transition = "0s";
             this.root.style.left = -1 * sumWidth + 'px';
             setTimeout(function () {
-                that_4.root.style.transition = that_4.moveTime + 'ms ' + that_4.transitionTiming;
-                that_4.root.style.left = '0';
+                _this.root.style.transition = _this.moveTime + 'ms ' + _this.transitionTiming;
+                _this.root.style.left = '0';
             }, 0);
             setTimeout(function () {
-                for (var _i = 0, children_6 = children_5; _i < children_6.length; _i++) {
-                    var child = children_6[_i];
-                    that_4.root.removeChild(child);
-                }
+                skrolr.forEach(children_4, function (child) { return _this.root.removeChild(child); });
             }, this.moveTime);
         }
-        var that = this;
         setTimeout(function () {
-            that.inTransition = false;
+            _this.inTransition = false;
         }, this.moveTime);
         return this;
     };
     skrolr.prototype.start = function () {
+        var _this = this;
         this.wasRunning = true;
         this.isRunning = true;
-        var that = this;
         clearInterval(this.interval);
-        this.interval = setInterval(function () {
-            that.forward();
-        }, this.moveTime + this.waitTime);
+        this.interval = setInterval(function () { return _this.forward(); }, this.moveTime + this.waitTime);
         return this;
     };
     skrolr.prototype.stop = function (noSet) {
@@ -244,6 +221,7 @@ var skrolr = (function () {
     return skrolr;
 }());
 skrolr.all = [];
+skrolr.each = function (fn) { return skrolr.all.forEach(function (obj) { return fn(obj); }); };
 skrolr.Array = (function (_super) {
     __extends(class_1, _super);
     function class_1() {
@@ -259,6 +237,11 @@ skrolr.Array = (function (_super) {
     };
     return class_1;
 }(Array));
+skrolr.forEach = function (obj, fn) { for (var _i = 0, obj_2 = obj; _i < obj_2.length; _i++) {
+    var o = obj_2[_i];
+    fn(o);
+} };
+skrolr.pmod = function (x, n) { return ((x % n) + n) % n; };
 window.onresize = function () {
     skrolr.each(function (obj) {
         obj.autoWidth();
