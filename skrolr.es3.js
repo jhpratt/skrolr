@@ -98,6 +98,17 @@ var skrolr = (function () {
             this.start();
         var _a;
     }
+    skrolr.prototype.reinitialize = function (options) {
+        var arrowsButtons = document.querySelectorAll(".sk-arrow, .sk-button-cont");
+        skrolr.forEach(arrowsButtons, function (obj) { return obj.parentNode.removeChild(obj); });
+        this.parent.parentNode.insertBefore(this.root, this.parent);
+        this.parent.parentNode.removeChild(this.parent);
+        if (options === undefined)
+            options = {};
+        if (!('numWide' in options))
+            options['numWide'] = this.numWide;
+        return new skrolr(this.root, options);
+    };
     skrolr.prototype.toggleArrows = function () {
         this.parent.children[1].classList.toggle("sk-hidden");
         this.parent.children[2].classList.toggle("sk-hidden");

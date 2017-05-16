@@ -81,6 +81,17 @@ class skrolr {
         if (document.hasFocus())
             this.start();
     }
+    reinitialize(options) {
+        let arrowsButtons = document.querySelectorAll(".sk-arrow, .sk-button-cont");
+        skrolr.forEach(arrowsButtons, (obj) => obj.parentNode.removeChild(obj));
+        this.parent.parentNode.insertBefore(this.root, this.parent);
+        this.parent.parentNode.removeChild(this.parent);
+        if (options === undefined)
+            options = {};
+        if (!('numWide' in options))
+            options['numWide'] = this.numWide;
+        return new skrolr(this.root, options);
+    }
     toggleArrows() {
         this.parent.children[1].classList.toggle("sk-hidden");
         this.parent.children[2].classList.toggle("sk-hidden");
