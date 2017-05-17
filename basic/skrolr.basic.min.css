@@ -1,1 +1,1 @@
-.sk{padding:0;font-size:0;position:relative;left:0;white-space:nowrap}.sk li{font-size:initial;height:100%;display:inline-flex}
+.sk{position:relative;left:0;display:grid;grid-template:1fr/repeat(6,20%);height:100%}
