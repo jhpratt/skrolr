@@ -51,6 +51,10 @@ var skrolr = (function () {
                 this.root.appendChild(child_1);
             }
         }
+        if (params.stopOnMouseOver === true) {
+            this.root.onmouseover = function () { return _this.stop(true); };
+            this.root.onmouseout = function () { return _this.start(); };
+        }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";

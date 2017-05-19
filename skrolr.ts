@@ -4,9 +4,10 @@
  * jhprattdev@gmail.com
  */
 
-// TODO #17 v1.1.0 re-initializing
 // TODO #25 v1.2.0 case when there are no children
 // TODO #20 v1.3.0 dragging on mobile
+// TODO #22 v1.2.0 vertical scrolling
+// TODO #30 v1.2.0 Combine wasRunning and isRunning to status
 // TODO #28 BUG jumps with scrollBy = -1
 
 class skrolr {
@@ -87,6 +88,12 @@ class skrolr {
 				this.root.removeChild( child );
 			for( let child of children ) // add back in randomized order
 				this.root.appendChild( child );
+		}
+		
+		// stop on mouse over
+		if( params.stopOnMouseOver === true ) {
+			this.root.onmouseover = () => this.stop( true );
+			this.root.onmouseout = () => this.start();
 		}
 		
 		// create parent element
@@ -187,7 +194,6 @@ class skrolr {
 						this.root.appendChild( copy );
 					}
 				}
-				
 				break;
 			}
 		}

@@ -38,6 +38,10 @@ class skrolr {
             for (let child of children)
                 this.root.appendChild(child);
         }
+        if (params.stopOnMouseOver === true) {
+            this.root.onmouseover = () => this.stop(true);
+            this.root.onmouseout = () => this.start();
+        }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
