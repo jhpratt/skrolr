@@ -26,11 +26,7 @@ function time() {
 fs.watchFile("skrolr.ts", { interval:1000 }, function() {
 	var e = exec("make transpile minify-js");
 	e.stdout.on("data", function(data) {
-<<<<<<< HEAD
 		console.log(time()+"  "+data.trim());
-=======
-		console.log(time()+"  "+data.trim()); i++;
->>>>>>> Milliseconds on auto-compile.js
 	});
 	
 	e.on("exit", function() {
