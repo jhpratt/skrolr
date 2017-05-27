@@ -6,7 +6,6 @@
 
 // TODO #25 v1.2.0 case when there are no children
 // TODO #22 v1.2.0 vertical scrolling
-// TODO #30 v1.2.0 Combine wasRunning and isRunning to status
 // TODO #20 v1.3.0 dragging on mobile
 // TODO #28 BUG jumps with scrollBy = -1
 
@@ -31,19 +30,18 @@ class skrolr {
 	private static forEach = ( obj: any, fn: any ): void => { for( let o of obj ) fn( o ) };
 	
 	// initialize variables for later
-	private readonly parent: HTMLElement;   // generated <div> containing root element
-	private readonly root: HTMLElement;     // original object passed as parameter
-	private numObjs: number;                // number of objects, excluding duplicates, arrows, and buttons
-	private curPos: number = 0;             // current position of skrolr, 0 to len-1
-	private interval: number;               // setInterval object (auto-generated)
-	private inTransition: boolean = false;  // is currently transitioning
-	public numWide: number[][];             // number of objects displayed // array of [min, max, size]
-	public moveTime: number;                // time to move (ms)
-	public waitTime: number;                // time between moving (ms)
-	public transitionTiming: string;        // ease-in-out, linear, etc.
-	public scrollBy: number;                // amount to scroll by each iteration
-	public wasRunning: boolean = true;      // if was running before blur / out of viewport
-	public isRunning: boolean = false;      // is currently running
+	private readonly parent:  HTMLElement;      // generated <div> containing root element
+	private readonly root:    HTMLElement;      // original object passed as parameter
+	private numObjs:          number;           // number of objects, excluding duplicates, arrows, and buttons
+	private curPos:           number = 0;       // current position of skrolr, 0 to len-1
+	private interval:         number;           // setInterval object (auto-generated)
+	private inTransition:     boolean = false;  // is currently transitioning
+	public numWide:           number[][];       // number of objects displayed // array of [min, max, size]
+	public moveTime:          number;           // time to move (ms)
+	public waitTime:          number;           // time between moving (ms)
+	public transitionTiming:  string;           // ease-in-out, linear, etc.
+	public scrollBy:          number;           // amount to scroll by each iteration
+	public status:            number = 1;       // 0 => stopped | 1 => paused | 2 => running
 	
 	// force positive modulus
 	private static pmod = (x:number, n:number): number => ((x%n)+n)%n;
@@ -69,10 +67,10 @@ class skrolr {
 		this.numWide = params.numWide;
 
 		// optional parameters
-		this.moveTime = params.moveTime || 500;
-		this.waitTime = params.waitTime || 3000;
+		this.moveTime         = params.moveTime         || 500;
+		this.waitTime         = params.waitTime         || 3000;
 		this.transitionTiming = params.transitionTiming || "ease-in-out";
-		this.scrollBy = params.scrollBy || 1;
+		this.scrollBy         = params.scrollBy         || 1;
 		
 		// auto-generated variables
 		this.numObjs = this.root.children.length; // for determining if left/right is faster
@@ -93,7 +91,7 @@ class skrolr {
 		// stop on mouse over
 		if( params.stopOnMouseOver === true ) {
 			this.root.onmouseover = () => this.stop( true );
-			this.root.onmouseout = () => { if( this.wasRunning ) this.start(); };
+			this.root.onmouseout = () => { if( this.status !== 0 ) this.start(); }; // start if not fully stopped
 		}
 		
 		// create parent element
@@ -214,7 +212,7 @@ class skrolr {
 		// stop if running
 		if( noStop !== true ) clearInterval( this.interval );
 		
-		loc = skrolr.pmod(loc, this.numObjs);
+		loc = skrolr.pmod( loc, this.numObjs );
 		
 		let distToLeft: number = skrolr.pmod( this.curPos-loc, this.numObjs );
 		let distToRight: number = skrolr.pmod( loc-this.curPos, this.numObjs );
@@ -280,16 +278,13 @@ class skrolr {
 	}
 	
 	public start(): skrolr {
-		this.wasRunning = true;
-		this.isRunning = true;
-		
+		this.status = 2; // running
 		clearInterval( this.interval ); // don't allow multiple intervals
 		this.interval = setInterval( () => this.forward(), this.moveTime + this.waitTime );
 		return this;
 	}
 	public stop( noSet?: boolean ): skrolr {
-		if( !noSet ) this.wasRunning = false; // only set wasRunning if noSet is excluded
-		this.isRunning = false;
+		this.status = noSet && this.status !== 0 ? 1 : 0;
 		clearInterval( this.interval );
 		return this;
 	}
@@ -316,7 +311,7 @@ window.onresize = () => {
 // resume running on window focus
 window.addEventListener( "focus", function() {
 	skrolr.each( function( obj: skrolr ) {
-		if( obj.wasRunning )
+		if( obj.status === 1 )
 			obj.start();
 	});
 });
@@ -332,9 +327,9 @@ window.addEventListener( "blur", function() {
 window.addEventListener( "scroll", function() {
 	skrolr.each( function( obj: skrolr ) {
 		const visible = obj.isVisible();
-		if( !obj.isRunning && obj.wasRunning && visible )
+		if( visible && obj.status == 1 ) // visible and paused
 			obj.start();
-		else if( obj.isRunning && !visible )
+		else if( !visible && obj.status == 2 ) // not visible and running
 			obj.stop( true );
 	});
 });

@@ -14,8 +14,7 @@ var skrolr = (function () {
         var _this = this;
         this.curPos = 0;
         this.inTransition = false;
-        this.wasRunning = true;
-        this.isRunning = false;
+        this.status = 1;
         this.forward = function () { return _this.goto(_this.curPos + _this.scrollBy, true); };
         this.backward = function () { return _this.goto(_this.curPos - _this.scrollBy, true); };
         skrolr.all.push(this);
@@ -53,7 +52,7 @@ var skrolr = (function () {
         }
         if (params.stopOnMouseOver === true) {
             this.root.onmouseover = function () { return _this.stop(true); };
-            this.root.onmouseout = function () { if (_this.wasRunning)
+            this.root.onmouseout = function () { if (_this.status !== 0)
                 _this.start(); };
         }
         this.parent = document.createElement("div");
@@ -213,16 +212,13 @@ var skrolr = (function () {
     };
     skrolr.prototype.start = function () {
         var _this = this;
-        this.wasRunning = true;
-        this.isRunning = true;
+        this.status = 2;
         clearInterval(this.interval);
         this.interval = setInterval(function () { return _this.forward(); }, this.moveTime + this.waitTime);
         return this;
     };
     skrolr.prototype.stop = function (noSet) {
-        if (!noSet)
-            this.wasRunning = false;
-        this.isRunning = false;
+        this.status = noSet && this.status !== 0 ? 1 : 0;
         clearInterval(this.interval);
         return this;
     };
@@ -265,7 +261,7 @@ window.onresize = function () {
 };
 window.addEventListener("focus", function () {
     skrolr.each(function (obj) {
-        if (obj.wasRunning)
+        if (obj.status === 1)
             obj.start();
     });
 });
@@ -277,9 +273,9 @@ window.addEventListener("blur", function () {
 window.addEventListener("scroll", function () {
     skrolr.each(function (obj) {
         var visible = obj.isVisible();
-        if (!obj.isRunning && obj.wasRunning && visible)
+        if (visible && obj.status == 1)
             obj.start();
-        else if (obj.isRunning && !visible)
+        else if (!visible && obj.status == 2)
             obj.stop(true);
     });
 });
