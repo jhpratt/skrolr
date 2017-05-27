@@ -45,7 +45,7 @@ class skrolr {
 	public isRunning: boolean = false;      // is currently running
 	
 	// force positive modulus
-	private static pmod = (x:number, n:number) => ((x%n)+n)%n;
+	private static pmod = (x:number, n:number): number => ((x%n)+n)%n;
 	
 	public constructor( root: HTMLElement|string, params: {[key:string]: any} ) {
 		skrolr.all.push( this );
