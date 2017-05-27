@@ -220,7 +220,7 @@ skrolr.Array = class extends Array {
 skrolr.forEach = (obj, fn) => { for (let o of obj)
     fn(o); };
 skrolr.pmod = (x, n) => ((x % n) + n) % n;
-window.onresize = function () {
+window.onresize = () => {
     skrolr.each(function (obj) {
         obj.autoWidth();
     });

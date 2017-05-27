@@ -1,3 +1,5 @@
+all: transpile minify
+
 transpile:
 	@echo "Transpiling TypeScript to ES6"
 	@tsc

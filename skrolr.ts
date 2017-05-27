@@ -5,9 +5,9 @@
  */
 
 // TODO #25 v1.2.0 case when there are no children
-// TODO #20 v1.3.0 dragging on mobile
 // TODO #22 v1.2.0 vertical scrolling
 // TODO #30 v1.2.0 Combine wasRunning and isRunning to status
+// TODO #20 v1.3.0 dragging on mobile
 // TODO #28 BUG jumps with scrollBy = -1
 
 class skrolr {
@@ -46,7 +46,7 @@ class skrolr {
 	public isRunning: boolean = false;      // is currently running
 	
 	// force positive modulus
-	private static pmod = (x:number, n:number) => ((x%n)+n)%n;
+	private static pmod = (x:number, n:number): number => ((x%n)+n)%n;
 	
 	public constructor( root: HTMLElement|string, params: {[key:string]: any} ) {
 		skrolr.all.push( this );
@@ -307,7 +307,7 @@ class skrolr {
 }
 
 // resize all child elements on window resize
-window.onresize = function() {
+window.onresize = () => {
 	skrolr.each( function( obj: skrolr ) {
 		obj.autoWidth();
 	});
