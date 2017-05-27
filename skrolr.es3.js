@@ -87,7 +87,7 @@ var skrolr = (function () {
             var _loop_1 = function (i) {
                 var btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = function () { return _this.goto(i); };
+                btn.onclick = function () { return _this.stop().goto(i); };
                 buttons.appendChild(btn);
             };
             for (var i = 0; i < this.numObjs; i++) {

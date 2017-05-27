@@ -1,13 +1,8 @@
-/* skrolr v1.1.0
+/* skrolr v1.1.1
  * GNU GPL v3
  * Jacob H. Pratt
  * jhprattdev@gmail.com
  */
-
-// TODO #17 v1.1.0 re-initializing
-// TODO #25 v1.2.0 case when there are no children
-// TODO #20 v1.3.0 dragging on mobile
-// TODO #28 BUG jumps with scrollBy = -1
 
 class skrolr {
 	// all skrolrs, for iterating through
@@ -139,7 +134,7 @@ class skrolr {
 			for( let i=0; i<this.numObjs; i++ ) {
 				let btn = document.createElement( "div" ); // buttons inside container
 				btn.className = "sk-button";
-				btn.onclick = () => this.goto(i);
+				btn.onclick = () => this.stop().goto(i);
 				buttons.appendChild( btn );
 			}
 		}

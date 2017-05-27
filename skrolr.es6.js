@@ -74,7 +74,7 @@ class skrolr {
             for (let i = 0; i < this.numObjs; i++) {
                 let btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = () => this.goto(i);
+                btn.onclick = () => this.stop().goto(i);
                 buttons.appendChild(btn);
             }
         }
