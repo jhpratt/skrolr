@@ -50,11 +50,6 @@ var skrolr = (function () {
                 this.root.appendChild(child_1);
             }
         }
-        if (params.stopOnMouseOver === true) {
-            this.root.onmouseover = function () { return _this.stop(true); };
-            this.root.onmouseout = function () { if (_this.status !== 0)
-                _this.start(); };
-        }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
@@ -70,6 +65,11 @@ var skrolr = (function () {
         this.root.parentElement.insertBefore(this.parent, this.root);
         this.parent.appendChild(this.root);
         this.autoWidth();
+        if (params.stopOnMouseOver === true) {
+            this.parent.onmouseover = function () { return _this.stop(true); };
+            this.parent.onmouseout = function () { if (_this.status !== 0)
+                _this.start(); };
+        }
         if (params.arrows === true) {
             var leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";

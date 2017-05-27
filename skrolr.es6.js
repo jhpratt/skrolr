@@ -37,11 +37,6 @@ class skrolr {
             for (let child of children)
                 this.root.appendChild(child);
         }
-        if (params.stopOnMouseOver === true) {
-            this.root.onmouseover = () => this.stop(true);
-            this.root.onmouseout = () => { if (this.status !== 0)
-                this.start(); };
-        }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
         this.parent.style.overflow = "hidden";
@@ -57,6 +52,11 @@ class skrolr {
         this.root.parentElement.insertBefore(this.parent, this.root);
         this.parent.appendChild(this.root);
         this.autoWidth();
+        if (params.stopOnMouseOver === true) {
+            this.parent.onmouseover = () => this.stop(true);
+            this.parent.onmouseout = () => { if (this.status !== 0)
+                this.start(); };
+        }
         if (params.arrows === true) {
             let leftArrow = document.createElement("div");
             leftArrow.className = "sk-arrow sk-left sk-hidden";

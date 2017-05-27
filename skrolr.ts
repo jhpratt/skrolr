@@ -87,13 +87,7 @@ class skrolr {
 			for( let child of children ) // add back in randomized order
 				this.root.appendChild( child );
 		}
-		
-		// stop on mouse over
-		if( params.stopOnMouseOver === true ) {
-			this.root.onmouseover = () => this.stop( true );
-			this.root.onmouseout = () => { if( this.status !== 0 ) this.start(); }; // start if not fully stopped
-		}
-		
+			
 		// create parent element
 		this.parent = document.createElement( "div" );
 		this.parent.style.position = "relative";
@@ -115,6 +109,12 @@ class skrolr {
 		this.autoWidth(); // set width of all children
 		// end create parent
 		
+		// stop on mouse over
+		if( params.stopOnMouseOver === true ) {
+			this.parent.onmouseover = () => this.stop( true );
+			this.parent.onmouseout = () => { if( this.status !== 0 ) this.start(); }; // start if not fully stopped
+		}
+	
 		if( params.arrows === true ) { // create arrows, hidden
 			let leftArrow: HTMLElement = document.createElement( "div" );
 			leftArrow.className = "sk-arrow sk-left sk-hidden";
