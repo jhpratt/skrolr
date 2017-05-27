@@ -53,7 +53,8 @@ var skrolr = (function () {
         }
         if (params.stopOnMouseOver === true) {
             this.root.onmouseover = function () { return _this.stop(true); };
-            this.root.onmouseout = function () { return _this.start(); };
+            this.root.onmouseout = function () { if (_this.wasRunning)
+                _this.start(); };
         }
         this.parent = document.createElement("div");
         this.parent.style.position = "relative";
@@ -91,7 +92,7 @@ var skrolr = (function () {
             var _loop_1 = function (i) {
                 var btn = document.createElement("div");
                 btn.className = "sk-button";
-                btn.onclick = function () { return _this.goto(i); };
+                btn.onclick = function () { return _this.stop().goto(i); };
                 buttons.appendChild(btn);
             };
             for (var i = 0; i < this.numObjs; i++) {

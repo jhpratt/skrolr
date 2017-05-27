@@ -93,7 +93,7 @@ class skrolr {
 		// stop on mouse over
 		if( params.stopOnMouseOver === true ) {
 			this.root.onmouseover = () => this.stop( true );
-			this.root.onmouseout = () => this.start();
+			this.root.onmouseout = () => { if( this.wasRunning ) this.start(); };
 		}
 		
 		// create parent element
@@ -146,7 +146,7 @@ class skrolr {
 			for( let i=0; i<this.numObjs; i++ ) {
 				let btn = document.createElement( "div" ); // buttons inside container
 				btn.className = "sk-button";
-				btn.onclick = () => this.goto(i);
+				btn.onclick = () => this.stop().goto(i);
 				buttons.appendChild( btn );
 			}
 		}
